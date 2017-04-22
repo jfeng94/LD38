@@ -3007,8 +3007,9 @@ GameObject:
   m_Component:
   - component: {fileID: 846923224}
   - component: {fileID: 846923225}
+  - component: {fileID: 846923226}
   m_Layer: 0
-  m_Name: playerStand
+  m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3062,6 +3063,19 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!114 &846923226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 846923223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 310d5748ec35ee74f84c07278064cd70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 846923225}
+  defaultFacingLeft: 1
 --- !u!1 &861864512
 GameObject:
   m_ObjectHideFlags: 0
@@ -3874,6 +3888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 1044519161}
   status: {fileID: 1044519162}
+  animator: {fileID: 846923226}
 --- !u!114 &1044519161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3885,6 +3900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2171ee5e2dc82e498097641a4be5767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1044519160}
   colliderVisualizer: {fileID: 2027524505}
 --- !u!114 &1044519162
 MonoBehaviour:
@@ -7356,7 +7372,7 @@ GameObject:
   - component: {fileID: 2027524508}
   - component: {fileID: 2027524506}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Debug  ColliderVisualizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

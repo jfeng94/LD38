@@ -4,6 +4,8 @@ using UnityEngine;
 
 // Handles taking input from the user and translating that into motion for the avatar.
 public class PlayerMovement : MonoBehaviour {
+	public Player player;
+
 	private Rigidbody2D rb;
 	private float jumpingVelocity = 20f;
 
@@ -148,9 +150,15 @@ public class PlayerMovement : MonoBehaviour {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// SPRITE ANIMATION
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	public void TurnLeft()  {}
-	public void TurnRight() {}
-	public void Crouch()    {}
+	public void TurnLeft()  {
+		player.animator.TurnLeft();
+	}
+	public void TurnRight() {
+		player.animator.TurnRight();
+	}
+	public void Crouch()    {
+		player.animator.Crouch();
+	}
 
 
 	void OnTriggerEnter2D(Collider2D collider) {

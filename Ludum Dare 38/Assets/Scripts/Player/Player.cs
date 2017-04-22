@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 	public PlayerMovement movement;
 	public PlayerStatus   status;
+	public PlayerAnimator animator;
 
 	// Use this for initialization
 	void Start () {
