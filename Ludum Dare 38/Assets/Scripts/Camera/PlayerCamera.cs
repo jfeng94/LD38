@@ -30,8 +30,6 @@ public class PlayerCamera : MonoBehaviour {
 		displacement.x = (player.transform.position.x - transform.position.x);
 		displacement.y = (player.transform.position.y - transform.position.y);
 
-		Debug.Log("displacement: " + displacement);
-
 		if (displacement.x < 0 && displacement.x < leftLeniency) {
 			displacement.x -= leftLeniency;
 		}
