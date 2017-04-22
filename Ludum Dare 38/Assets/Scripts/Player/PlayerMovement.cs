@@ -153,41 +153,19 @@ public class PlayerMovement : MonoBehaviour {
 	public void Crouch()    {}
 
 
-	void OnCollisionEnter2D(Collision2D collision)
-	{
-		//# ContactPoint2D[] contacts = collision.contacts;
-		//# for (int i = 0; i < contacts.Length; i++)  {
-		//# 	Vector2 normal = contacts[i].normal;
-		//# 	if (normal == Vector2.up) {
-		//# 		Debug.Log("OnCollisionEnter2D");
-		//# 		grounded = true;
-		//# 		break;
-		//# 	}
-		//# }
-
-	 	Interactable interactable = collision.gameObject.GetComponent<Interactable>();
+	void OnTriggerEnter2D(Collider2D collider) {
+	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
 	 	if (interactable != null) {
+	 		Debug.Log("currentInteractable set to " + interactable, interactable);
 	 		currentInteractable = interactable;
 	 	}
 	}
 
-	//# void OnCollisionStay2D(Collision2D collision)
-	//# {
-	//# 	ContactPoint2D[] contacts = collision.contacts;
-	//# 	for (int i = 0; i < contacts.Length; i++)  {
-	//# 		Vector2 normal = contacts[i].normal;
-	//# 		if (normal == Vector2.up) {
-	//# 			Debug.Log("OnCollisionStay2D");
-	//# 			grounded = true;
-	//# 			break;
-	//# 		}
-	//# 	}
-	//# }
-
-	void OnCollisionExit2D(Collision2D collision)
+	void OnTriggerExit2D(Collider2D collider)
 	{
-	 	Interactable interactable = collision.gameObject.GetComponent<Interactable>();
+	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
 	 	if (interactable == currentInteractable) {
+	 		Debug.Log("currentInteractable unset from  " + interactable, interactable);
 	 		currentInteractable = null;
 	 	}
 	}
