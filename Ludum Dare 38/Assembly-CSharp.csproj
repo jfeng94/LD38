@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Camera\PlayerCamera.cs" />
+     <Compile Include="Assets\Scripts\Camera\WarpObject.cs" />
      <Compile Include="Assets\Scripts\Camera\WarpTarget.cs" />
      <Compile Include="Assets\Scripts\Camera\WarpTrigger.cs" />
      <Compile Include="Assets\Scripts\Environment\Enemy.cs" />
