@@ -10,7 +10,7 @@ public class PlayerCamera : MonoBehaviour {
 	float  leftLeniency = -5.0f;
 	float rightLeniency =  5.0f;
 	float    upLeniency =  2.5f;
-	float  downLeniency = -4.0f;
+	float  downLeniency = -3.5f;
 
 
 	// Use this for initialization
