@@ -12,10 +12,15 @@ public class PlayerMovement : MonoBehaviour {
 	private Interactable currentInteractable = null;
 
 	// Direction from center of player game object to feet.
-	private Vector2 directionTowardsFeet = Vector2.down;
+	private Vector3 directionTowardsFeet = Vector3.down;
 
 	// Distance from center of player game object to feet.
-	private float distanceToFeet = 0.55f;
+	private float distanceToFeet = 0.8f;
+
+	private float movementSpeed = 5f;
+	private float aerialDrift   = 0.5f;
+
+	public GameObject colliderVisualizer;
 
 	// Use this for initialization
 	void Start () {
@@ -28,10 +33,15 @@ public class PlayerMovement : MonoBehaviour {
 		int layerMask = 1 << groundLayer.value;
 
 		// Check for groundedness
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, directionTowardsFeet,
-		                                     distanceToFeet, layerMask);
-		if (hit.collider != null) {
-			
+		Vector3 footPosition = transform.position + (directionTowardsFeet * distanceToFeet);
+		Collider2D collider = Physics2D.OverlapBox(new Vector2(footPosition.x, footPosition.y),
+		                                           new Vector2(0.6f, 0.2f), 0f, layerMask);
+
+		colliderVisualizer.transform.position = footPosition;
+		colliderVisualizer.transform.localScale = new Vector3(0.6f, 0.2f, 1f);
+
+
+		if (collider != null) {
 			// Disallow boost jumping
 			if (rb.velocity.y > 0) {
 				grounded = false;
@@ -43,6 +53,26 @@ public class PlayerMovement : MonoBehaviour {
 		else {
 			grounded = false;
 		}
+
+
+
+
+
+		//# RaycastHit2D hit = Physics2D.Raycast(transform.position, directionTowardsFeet,
+		//#                                      distanceToFeet, layerMask);
+		//# if (hit.collider != null) {
+			
+		//# 	// Disallow boost jumping
+		//# 	if (rb.velocity.y > 0) {
+		//# 		grounded = false;
+		//# 	}
+		//# 	else {
+		//# 		grounded = true;
+		//# 	}
+		//# }
+		//# else {
+		//# 	grounded = false;
+		//# }
 
 
 		//------------------------------------------------------------------------------------------
@@ -78,8 +108,6 @@ public class PlayerMovement : MonoBehaviour {
 	public void Jump() {
 		// Only allow jumping if we're grounded
 		if (grounded) {
-			Debug.Log("Jump");
-
 			Vector2 initialVelocity = rb.velocity;
 			//# initialVelocity += new Vector2(0, jumpingVelocity);
 			initialVelocity.y = jumpingVelocity;
@@ -89,11 +117,33 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	public void MoveLeft() {
-		transform.position += (Vector3.left * 0.1f); 
+		Vector3 velocity = rb.velocity;
+		if (grounded) {
+			velocity.x = -1f * movementSpeed;
+		}
+		else {
+			velocity.x += -1f * aerialDrift;
+
+			if (velocity.x < -1f * movementSpeed) {
+				velocity.x = -1f * movementSpeed;
+			}
+		}
+		rb.velocity = velocity;
 	}
 
 	public void MoveRight() {
-		transform.position += (Vector3.right * 0.1f); 
+		Vector3 velocity = rb.velocity;
+		if (grounded) {
+			velocity.x = movementSpeed;
+		}
+		else {
+			velocity.x += aerialDrift;
+
+			if (velocity.x > movementSpeed) {
+				velocity.x = movementSpeed;
+			}
+		}
+		rb.velocity = velocity;
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// SPRITE ANIMATION

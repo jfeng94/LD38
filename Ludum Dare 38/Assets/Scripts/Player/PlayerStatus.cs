@@ -12,7 +12,7 @@ public class PlayerStatus : MonoBehaviour {
 	private int health = 100;
 	private int mana   = 0;
 
-	// Use this for initialization
+	// Use this for initializationq
 	void Start () {
 		
 	}
