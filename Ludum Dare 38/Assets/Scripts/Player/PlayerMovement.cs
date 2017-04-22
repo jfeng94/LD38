@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	private bool grounded = true;
 
+	private Interactable currentInteractable = null;
+
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
@@ -23,12 +25,24 @@ public class PlayerMovement : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space))      Jump();
 		if (Input.GetKeyDown(KeyCode.LeftArrow))  TurnLeft();
 		if (Input.GetKeyDown(KeyCode.RightArrow)) TurnRight();
+		if (Input.GetKeyDown(KeyCode.F))          Interact();
 
 		//------------------------------------------------------------------------------------------
 		// WHILE HOLDING KEY DOWN
 		//------------------------------------------------------------------------------------------
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
+
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// INTERACTION
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void Interact() {
+		if (currentInteractable != null) {
+			currentInteractable.Interact();
+		}
 	}
 
 
@@ -68,6 +82,11 @@ public class PlayerMovement : MonoBehaviour {
 	 	Floor floor = collision.gameObject.GetComponent<Floor>();
 	 	if (floor != null) {
 	 		grounded = true;
+	 	}
+
+	 	Interactable interactable = collision.gameObject.GetComponent<Interactable>();
+	 	if (interactable != null) {
+	 		currentInteractable = interactable;
 	 	}
 	}
 }

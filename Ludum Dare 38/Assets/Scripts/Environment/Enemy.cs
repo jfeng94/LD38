@@ -14,7 +14,7 @@ public class Enemy : Interactable {
 	public float movementSpeed = 0.1f;
 
 	// Use this for initialization
-	void Start () {
+	public override void Start () {
 		spawnPosition = transform.position;
 	}
 	
