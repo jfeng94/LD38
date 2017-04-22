@@ -7,18 +7,27 @@ public class NPC : Interactable {
 
 	public override void Start() {
 		base.Start();
-		textBubble.SetActive(false);
+
+		if (textBubble != null) {
+			textBubble.SetActive(false);
+		}
 	}
 
 	public override void Interact() {
-		indicator.SetActive(false);
+		if (indicator != null) {
+			indicator.SetActive(false);
+		}
 
-		textBubble.SetActive(true);
+		if (indicator != null) {
+			textBubble.SetActive(true);
+		}
 
 		Invoke("HideTextBubble", 1f);
 	}	
 
 	private void HideTextBubble() {
-		textBubble.SetActive(false);
+		if (textBubble != null) {
+			textBubble.SetActive(false);
+		}
 	}
 }
