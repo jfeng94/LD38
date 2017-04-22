@@ -48,8 +48,6 @@ public class PlayerMovement : MonoBehaviour {
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS DOWN
 		//------------------------------------------------------------------------------------------
-		if (Input.GetKeyDown(KeyCode.UpArrow))    Jump();
-		if (Input.GetKeyDown(KeyCode.Space))      Jump();
 		if (Input.GetKeyDown(KeyCode.LeftArrow))  TurnLeft();
 		if (Input.GetKeyDown(KeyCode.RightArrow)) TurnRight();
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
@@ -57,6 +55,7 @@ public class PlayerMovement : MonoBehaviour {
 		//------------------------------------------------------------------------------------------
 		// WHILE HOLDING KEY DOWN
 		//------------------------------------------------------------------------------------------
+		if (Input.GetKey(KeyCode.Space))      Jump();
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
 
