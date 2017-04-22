@@ -11,7 +11,7 @@ public class WarpTrigger : WarpObject {
 
 	void Update() {
 		if (playerToWarp != null) {
-			if ( (playerToWarp.transform.position.x - transform.position.x) < leniency ) {
+			if ( Mathf.Abs(playerToWarp.transform.position.x - transform.position.x) < leniency ) {
 				Warp(playerToWarp);
 			}
 		}
