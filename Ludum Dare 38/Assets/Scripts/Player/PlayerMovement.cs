@@ -52,6 +52,8 @@ public class PlayerMovement : MonoBehaviour {
 	public void Jump() {
 		// Only allow jumping if we're grounded
 		if (grounded) {
+			Debug.Log("Jump");
+
 			Vector2 initialVelocity = rb.velocity;
 			initialVelocity += new Vector2(0, jumpingVelocity);
 			rb.velocity = initialVelocity;
@@ -79,14 +81,41 @@ public class PlayerMovement : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-	 	Floor floor = collision.gameObject.GetComponent<Floor>();
-	 	if (floor != null) {
-	 		grounded = true;
-	 	}
+		ContactPoint2D[] contacts = collision.contacts;
+		for (int i = 0; i < contacts.Length; i++)  {
+			Vector2 normal = contacts[i].normal;
+			if (normal == Vector2.up) {
+				Debug.Log("OnCollisionEnter2D");
+				grounded = true;
+				break;
+			}
+		}
 
 	 	Interactable interactable = collision.gameObject.GetComponent<Interactable>();
 	 	if (interactable != null) {
 	 		currentInteractable = interactable;
 	 	}
 	}
+
+	//# void OnCollisionStay2D(Collision2D collision)
+	//# {
+	//# 	ContactPoint2D[] contacts = collision.contacts;
+	//# 	for (int i = 0; i < contacts.Length; i++)  {
+	//# 		Vector2 normal = contacts[i].normal;
+	//# 		if (normal == Vector2.up) {
+	//# 			Debug.Log("OnCollisionStay2D");
+	//# 			grounded = true;
+	//# 			break;
+	//# 		}
+	//# 	}
+	//# }
+
+	void OnCollisionExit2D(Collision2D collision)
+	{
+	 	Interactable interactable = collision.gameObject.GetComponent<Interactable>();
+	 	if (interactable == currentInteractable) {
+	 		currentInteractable = null;
+	 	}
+	}
+
 }
