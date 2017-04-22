@@ -64,8 +64,6 @@ public class PlayerMovement : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-	 	Debug.Log("OnCollisionEnter2D");
-
 	 	Floor floor = collision.gameObject.GetComponent<Floor>();
 	 	if (floor != null) {
 	 		grounded = true;
