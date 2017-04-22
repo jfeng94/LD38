@@ -47,12 +47,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Camera\PlayerCamera.cs" />
+     <Compile Include="Assets\Scripts\Environment\Enemy.cs" />
      <Compile Include="Assets\Scripts\Environment\Floor.cs" />
+     <Compile Include="Assets\Scripts\Environment\Interactable.cs" />
      <Compile Include="Assets\Scripts\Environment\NPC.cs" />
      <Compile Include="Assets\Scripts\Player\Player.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerAnimation.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStatus.cs" />
+     <Compile Include="Assets\Scripts\UI\DialogueBox.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
