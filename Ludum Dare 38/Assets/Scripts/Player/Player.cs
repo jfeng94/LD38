@@ -16,4 +16,6 @@ public class Player : MonoBehaviour {
 	void Update () {
 		
 	}
+
+	public void InflictDamage(int damage, Vector2 knockbackVector) {}
 }

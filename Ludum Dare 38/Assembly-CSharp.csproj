@@ -58,8 +58,9 @@
      <Compile Include="Assets\Scripts\Player\PlayerAnimation.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStatus.cs" />
-     <Compile Include="Assets\Scripts\UI\DialogueBox.cs" />
-     <Compile Include="Assets\Scripts\UI\HUD.cs" />
+     <Compile Include="Assets\Scripts\UI\HUD\HUD.cs" />
+     <Compile Include="Assets\Scripts\UI\HUD\ResourceBar.cs" />
+     <Compile Include="Assets\Scripts\UI\HUD\ResourceTick.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

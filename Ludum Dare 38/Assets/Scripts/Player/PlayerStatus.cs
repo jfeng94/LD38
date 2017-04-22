@@ -6,11 +6,11 @@ using UnityEngine;
 // TODO: Will hold onto the player's current status, i.e. money, health, mana, etc.
 ////     Whatever HUD we write will probably have to look at this class.
 public class PlayerStatus : MonoBehaviour {
-	private int maxHealth = 100;
+	private int maxHealth = 5;
 	private int maxMana   = 4;
 
-	private int health = 100;
-	private int mana   = 0;
+	private int health = 3;
+	private int mana   = 1;
 
 	// Use this for initializationq
 	void Start () {
