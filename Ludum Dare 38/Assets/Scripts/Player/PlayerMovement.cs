@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour {
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS DOWN
 		//------------------------------------------------------------------------------------------
+		if (Input.GetKeyDown(KeyCode.UpArrow))    Jump();
 		if (Input.GetKeyDown(KeyCode.Space))      Jump();
 		if (Input.GetKeyDown(KeyCode.LeftArrow))  TurnLeft();
 		if (Input.GetKeyDown(KeyCode.RightArrow)) TurnRight();
