@@ -20,7 +20,8 @@ public class Player : MonoBehaviour {
 	// Distance from center of player game object to feet.
 	private float distanceToFeet = 0.8f;
 
-	private float movementSpeed = 5f;
+	private float maxSpeed      = 5f;
+	private float movementSpeed = 0.5f;
 	private float aerialDrift   = 0.5f;
 
 	public GameObject colliderVisualizer;
@@ -125,31 +126,25 @@ public class Player : MonoBehaviour {
 
 	public void MoveLeft() {
 		Vector3 velocity = rb.velocity;
-		if (grounded) {
-			velocity.x = -1f * movementSpeed;
-		}
-		else {
-			velocity.x += -1f * aerialDrift;
+		if (grounded) velocity.x += -1f * movementSpeed;
+		else          velocity.x += -1f * aerialDrift;
+		
+		if (velocity.x < -1f * maxSpeed) velocity.x = -1f * maxSpeed;
 
-			if (velocity.x < -1f * movementSpeed) {
-				velocity.x = -1f * movementSpeed;
-			}
-		}
+		Debug.Log("Velocity " + velocity);
+
 		rb.velocity = velocity;
 	}
 
 	public void MoveRight() {
 		Vector3 velocity = rb.velocity;
-		if (grounded) {
-			velocity.x = movementSpeed;
-		}
-		else {
-			velocity.x += aerialDrift;
+		if (grounded) velocity.x += movementSpeed;
+		else          velocity.x += aerialDrift;
+		
+		if (velocity.x > maxSpeed) velocity.x = maxSpeed;
 
-			if (velocity.x > movementSpeed) {
-				velocity.x = movementSpeed;
-			}
-		}
+		Debug.Log("Velocity " + velocity);
+
 		rb.velocity = velocity;
 	}
 
