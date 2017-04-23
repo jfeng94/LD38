@@ -10,21 +10,32 @@ public class Player : MonoBehaviour {
 	private Rigidbody2D rb;
 	private float jumpingVelocity = 20f;
 
-	private bool grounded = true;
+	// Movement state flags
+	private bool grounded    = true;
+	private bool movingLeft  = false;
+	private bool movingRight = false;
+
+	// Hitstun state variables
+	private int lastHitFrame = -1;
+	private int hitstunFrameCount = 5; 
 
 	private Interactable currentInteractable = null;
 
 	// Direction from center of player game object to feet.
 	private Vector3 directionTowardsFeet = Vector3.down;
-
 	// Distance from center of player game object to feet.
 	private float distanceToFeet = 0.8f;
 
-	private float maxSpeed      = 5f;
-	private float movementSpeed = 1f;
-	private float aerialDrift   = 0.5f;
-
 	public GameObject colliderVisualizer;
+
+	// How fast the player can possibly move
+	private float maxSpeed = 5f;
+
+	// How much the user accelerates per frame while holding a direction
+	private float movementSpeed = 1f;
+
+	// How much the user can affect their aerial trajectory.
+	private float aerialDrift = 0.5f;
 
 	// Use this for initialization
 	void Start () {
@@ -33,14 +44,21 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		UpdateGroundedness();
+		CheckGrounded();
 
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS DOWN
 		//------------------------------------------------------------------------------------------
-		if (Input.GetKeyDown(KeyCode.LeftArrow))  TurnLeft();
-		if (Input.GetKeyDown(KeyCode.RightArrow)) TurnRight();
+		if (Input.GetKeyDown(KeyCode.LeftArrow))  { TurnLeft();  movingLeft  = true; }
+		if (Input.GetKeyDown(KeyCode.RightArrow)) { TurnRight(); movingRight = true; }
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
+
+
+		//------------------------------------------------------------------------------------------
+		// ON KEY PRESS UP
+		//------------------------------------------------------------------------------------------
+		if (Input.GetKeyUp(KeyCode.LeftArrow))  movingLeft  = false;
+		if (Input.GetKeyUp(KeyCode.RightArrow)) movingRight = false;
 
 		//------------------------------------------------------------------------------------------
 		// WHILE HOLDING KEY DOWN
@@ -49,13 +67,14 @@ public class Player : MonoBehaviour {
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
 
+		UpdateAnimationState();
 	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// GROUNDEDNESS
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	private void UpdateGroundedness() {
+	private void CheckGrounded() {
 		LayerMask groundLayer = LayerMask.NameToLayer("Ground");
 		int layerMask = 1 << groundLayer.value;
 
@@ -68,19 +87,10 @@ public class Player : MonoBehaviour {
 		colliderVisualizer.transform.localScale = new Vector3(0.6f, 0.2f, 1f);
 
 
-		if (collider != null) {
-			// Disallow boost jumping
-			if (rb.velocity.y > 0) {
-				grounded = false;
-			}
-			else {
-				grounded = true;
-			}
+		if (collider != null && rb.velocity.y >= 0) {
+			grounded = true;
 		}
-		else {
-			grounded = false;
-		}
-
+		else grounded = false;
 	}
 
 
@@ -92,11 +102,16 @@ public class Player : MonoBehaviour {
 	}
 
 	public void InflictDamage(int damage, Vector2 direction, float strength) {
-		status.SpendHealth(damage);
+		if (Time.frameCount - lastHitFrame > hitstunFrameCount) {
+			status.SpendHealth(damage);
 
-		Debug.Log("InflictDamage force added: " + direction + " - " + strength);
-		rb.AddForce(direction * strength, ForceMode2D.Impulse);
-		// TODO -- Check for game overs?
+			Debug.Log("InflictDamage force added: " + direction + " - " + strength);
+			rb.AddForce(direction * strength, ForceMode2D.Impulse);
+
+			lastHitFrame = Time.frameCount;
+
+			// TODO -- Check for game overs?
+		}
 	}
 
 
@@ -117,10 +132,11 @@ public class Player : MonoBehaviour {
 		// Only allow jumping if we're grounded
 		if (grounded) {
 			Vector2 initialVelocity = rb.velocity;
-			//# initialVelocity += new Vector2(0, jumpingVelocity);
 			initialVelocity.y = jumpingVelocity;
-			rb.velocity = initialVelocity;			
+			rb.velocity = initialVelocity;	
 			// TODO: Start animating jump cycle
+
+			grounded = false;
 		}
 	}
 
@@ -130,8 +146,6 @@ public class Player : MonoBehaviour {
 		else          velocity.x += -1f * aerialDrift;
 		
 		if (velocity.x < -1f * maxSpeed) velocity.x = -1f * maxSpeed;
-
-		Debug.Log("Velocity " + velocity);
 
 		rb.velocity = velocity;
 	}
@@ -143,14 +157,28 @@ public class Player : MonoBehaviour {
 		
 		if (velocity.x > maxSpeed) velocity.x = maxSpeed;
 
-		Debug.Log("Velocity " + velocity);
-
 		rb.velocity = velocity;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// SPRITE ANIMATION
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	private void UpdateAnimationState() {
+		if (Time.frameCount - lastHitFrame < hitstunFrameCount) {
+			animator.SetState(PlayerAnimator.State.Stun);
+		}
+		else if (!grounded) {
+			animator.SetState(PlayerAnimator.State.Jump);
+		}
+		else if (movingLeft ^ movingRight) {
+			Debug.Log("movingLeft is " + movingLeft + " --- movingRight is " + movingRight);
+			animator.SetState(PlayerAnimator.State.Walk);
+		}
+		else {
+			animator.SetState(PlayerAnimator.State.Idle);
+		}
+	}
+
 	public void TurnLeft()  {
 		animator.TurnLeft();
 	}
@@ -158,7 +186,6 @@ public class Player : MonoBehaviour {
 		animator.TurnRight();
 	}
 	public void Crouch()    {
-		animator.Crouch();
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
