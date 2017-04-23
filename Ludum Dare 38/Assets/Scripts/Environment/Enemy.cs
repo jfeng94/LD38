@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public virtual void Update () {
 		// Get distance from spawn
 		float distanceFromSpawn = (transform.position - spawnPosition).magnitude;
 
