@@ -9824,7 +9824,7 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0, w: 0}
   damage: 1
-  knockbackStrength: 2
+  knockbackStrength: 20
 --- !u!50 &964511826
 Rigidbody2D:
   serializedVersion: 4

@@ -35,9 +35,6 @@ public class BouncingEnemy : Enemy {
 	protected override void MoveTowardsPosition(Vector3 position) {
 		Vector3 displacement = position - transform.position;
 
-
-
-
 		Rigidbody2D rb = GetComponent<Rigidbody2D>();
 		if (rb != null) {
 			Vector3 velocity = rb.velocity;
