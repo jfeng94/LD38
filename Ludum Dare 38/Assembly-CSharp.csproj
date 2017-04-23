@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\Camera\WarpObject.cs" />
      <Compile Include="Assets\Scripts\Camera\WarpTarget.cs" />
      <Compile Include="Assets\Scripts\Camera\WarpTrigger.cs" />
+     <Compile Include="Assets\Scripts\Enemy\EnemyHitbox.cs" />
      <Compile Include="Assets\Scripts\Environment\Enemy.cs" />
      <Compile Include="Assets\Scripts\Environment\Floor.cs" />
      <Compile Include="Assets\Scripts\Environment\Interactable.cs" />

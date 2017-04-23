@@ -9,8 +9,8 @@ public class PlayerStatus : MonoBehaviour {
 	private int maxHealth = 5;
 	private int maxMana   = 4;
 
-	private int health = 3;
-	private int mana   = 1;
+	private int health = 5;
+	private int mana   = 3;
 
 	// Use this for initializationq
 	void Start () {
@@ -22,18 +22,45 @@ public class PlayerStatus : MonoBehaviour {
 		
 	}
 
-	public int GetHealth() {
-		return health;
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// HEALTH
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void GainHealth(int amount) {
+		health += amount;
+		EnsureHealthIsWithinBounds();
 	}
 
-	public int GetMana() {
-		return mana;
+	public void SpendHealth(int amount) {
+		health -= amount;
+		EnsureHealthIsWithinBounds();
+	}
+
+	private void EnsureHealthIsWithinBounds() {
+		if (health <= 0) {
+			Debug.Log("Game Over!");
+		}
+		if (health > maxHealth) {
+			health = maxHealth;
+		}
+	}
+
+	public int GetHealth() {
+		return health;
 	}
 
 	public int GetMaxHealth() {
 		return maxHealth;
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// MANA
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public int GetMana() {
+		return mana;
+	}
 	public int GetMaxMana() {
 		return maxMana;
 	}	

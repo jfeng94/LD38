@@ -29,7 +29,9 @@ public class ResourceBar : MonoBehaviour {
 		} 
 
 		for (int i = value; i < ticks.Count; i++) {
-			ticks[i].gameObject.SetActive(false);
+			if (i >= 0) {
+				ticks[i].gameObject.SetActive(false);
+			}
 		} 
 	} 
 
