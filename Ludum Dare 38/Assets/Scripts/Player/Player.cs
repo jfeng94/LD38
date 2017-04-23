@@ -95,7 +95,6 @@ public class Player : MonoBehaviour {
 
 		Debug.Log("InflictDamage force added: " + direction + " - " + strength);
 		rb.AddForce(direction * strength, ForceMode2D.Impulse);
-
 		// TODO -- Check for game overs?
 	}
 

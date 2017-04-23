@@ -4386,7 +4386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  knockbackStrength: 10
+  knockbackStrength: 50
 --- !u!1 &525963287
 GameObject:
   m_ObjectHideFlags: 0

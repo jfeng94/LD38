@@ -18,8 +18,6 @@ public class EnemyHitbox : MonoBehaviour {
 	}
 
 	public void OnCollisionEnter2D(Collision2D collision) {
-		Debug.Log("OnCollisionEnter2D: " + collision.gameObject.name, collision.gameObject);
-
 		Player player = collision.gameObject.GetComponent<Player>();
 
 		if (player != null) {
