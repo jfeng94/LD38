@@ -21,7 +21,7 @@ public class Player : MonoBehaviour {
 	private float distanceToFeet = 0.8f;
 
 	private float maxSpeed      = 5f;
-	private float movementSpeed = 0.5f;
+	private float movementSpeed = 1f;
 	private float aerialDrift   = 0.5f;
 
 	public GameObject colliderVisualizer;
