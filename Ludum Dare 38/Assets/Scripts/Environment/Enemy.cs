@@ -66,6 +66,7 @@ public class Enemy : Character {
 	public void SetAggro(Player player) {
 		if (player != null) {
 			aggroTarget = player;
+			Debug.Log("Enemy gain aggro", player);
 			aggroTarget.AddEnemyAggro(this);
 		}
 	}
