@@ -17,10 +17,6 @@ public class Character : MonoBehaviour, IHittable {
 	//----------------------------------------------------------------------------------------------
 	// Whether the character is touching the ground
 	protected bool grounded = true;
-	// Direction from center of player game object to feet.
-	protected Vector3 directionTowardsFeet = Vector3.down;
-	// Distance from center of player game object to feet.
-	protected float distanceToFeet = 0.8f;
 
 	public GameObject colliderVisualizer;
 
@@ -28,13 +24,13 @@ public class Character : MonoBehaviour, IHittable {
 	// Movement
 	//----------------------------------------------------------------------------------------------
 	// How fast the player can possibly move
-	protected float maxSpeed = 5f;
+	public float maxSpeed = 5f;
 
 	// How much the user accelerates per frame while holding a direction
-	protected float movementSpeed = 1f;
+	public float movementSpeed = 1f;
 
 	// How much the user can affect their aerial trajectory.
-	protected float aerialDrift = 0.5f;
+	public float aerialDrift = 0.5f;
 
 	//----------------------------------------------------------------------------------------------
 	// Physics
@@ -97,18 +93,6 @@ public class Character : MonoBehaviour, IHittable {
 		}
 		
 		grounded = false;
-		//# // Check for groundedness
-		//# Vector3 footPosition = transform.position + (directionTowardsFeet * distanceToFeet);
-		//# Collider2D collider = Physics2D.OverlapBox(new Vector2(footPosition.x, footPosition.y),
-		//#                                            new Vector2(0.6f, 0.2f), 0f, layerMask);
-
-		//# colliderVisualizer.transform.position = footPosition;
-		//# colliderVisualizer.transform.localScale = new Vector3(0.6f, 0.2f, 1f);
-
-		//# if (collider != null && rb.velocity.y <= 0) {
-		//# 	grounded = true;
-		//# }
-		//# else grounded = false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,9 +109,6 @@ public class Character : MonoBehaviour, IHittable {
 	}
 
 	private void EnsureHealthIsWithinBounds() {
-		if (health <= 0) {
-			Debug.Log("Game Over!");
-		}
 		if (health > maxHealth) {
 			health = maxHealth;
 		}
@@ -149,7 +130,11 @@ public class Character : MonoBehaviour, IHittable {
 		DealDamage(damage);
 
 		if (rb != null) {
+			Debug.Log("InflictDamage imparted force in " + direction + " direction with " + strength + " strength");
 			rb.AddForce(direction * strength, ForceMode2D.Impulse);
+		}
+		else {
+			Debug.Log("InflictDamage Rigidbody2D is null?");
 		}
 	}
 

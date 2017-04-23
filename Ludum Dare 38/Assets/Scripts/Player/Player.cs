@@ -139,6 +139,9 @@ public class Player : Character {
 			StartInvincibility();
 
 			// TODO -- Check for game overs?
+			if (health <= 0) {
+				Debug.Log("Game Over!!!");
+			}
 		}
 	}
 

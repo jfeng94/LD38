@@ -10,10 +10,8 @@ public class Hitbox : MonoBehaviour {
 		return false;
 	}
 
-	public void OnCollisionEnter2D(Collision2D collision) {
+	public void InflictDamage(Collision2D collision) {
 		IHittable hitObject = collision.gameObject.GetComponent<IHittable>();
-
-		Debug.Log("collision.gameObject is " + collision.gameObject.name, collision.gameObject);
 
 		if (hitObject != null && IsValidTarget(hitObject)) {
 			ContactPoint2D[] contacts = collision.contacts;
@@ -30,5 +28,14 @@ public class Hitbox : MonoBehaviour {
 			}
 		}
 	}
+
+	public void OnCollisionEnter2D(Collision2D collision) {
+		InflictDamage(collision);
+	}
+
+	public void OnCollisionStay2D(Collision2D collision) {
+		InflictDamage(collision);
+	}
+
 }
 

@@ -93,22 +93,25 @@ public class Enemy : Character {
 	}
 
 	protected virtual void MoveTowardsPosition(Vector3 position) {
-		float displacement = position.x - transform.position.x;
-
-		if (Mathf.Abs(displacement) < 0.2f) {
-			return;
-		}
-
-		Rigidbody2D rb = GetComponent<Rigidbody2D>();
 		if (rb != null) {
+			float displacement = position.x - transform.position.x;
+
 			Vector3 velocity = rb.velocity;
-			velocity.x = movementSpeed;
-			if (displacement < 0f) {
-				velocity.x *= -1f;
+
+			if (Mathf.Abs(displacement) < 0.2f) {
+				velocity.x = 0;
+				rb.velocity = velocity;
+				return;
+			}
+
+			if (grounded) velocity.x += Mathf.Sign(displacement) * movementSpeed;
+			else          velocity.x += Mathf.Sign(displacement) * aerialDrift;
+			
+			if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement)) {
+				velocity.x = Mathf.Sign(displacement) * maxSpeed;
 			}
 
 			rb.velocity = velocity;
 		}
-
 	}
 }
