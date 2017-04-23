@@ -59,6 +59,7 @@
      <Compile Include="Assets\Scripts\Environment\Interactable.cs" />
      <Compile Include="Assets\Scripts\Environment\NPC.cs" />
      <Compile Include="Assets\Scripts\Player\Player.cs" />
+     <Compile Include="Assets\Scripts\Player\PlayerAnimation.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerAnimator.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStatus.cs" />

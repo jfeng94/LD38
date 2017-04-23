@@ -14,10 +14,12 @@ public class Player : MonoBehaviour {
 	private bool grounded    = true;
 	private bool movingLeft  = false;
 	private bool movingRight = false;
+	private bool attacking   = false;
 
-	// Hitstun state variables
-	private const int hitstunFrameCount = 60; 
-	private int lastHitFrame = -1 * hitstunFrameCount;
+	// Invincible state variables
+	private bool invincible;
+	private int  invincibleStartFrame;
+	private int  invincibilityFrames = 60;
 
 	private Interactable currentInteractable = null;
 
@@ -49,6 +51,8 @@ public class Player : MonoBehaviour {
 	void Update () {
 		CheckGrounded();
 
+		CheckInvincibility();
+
 		// Go through all enemies with aggro. If we're sufficiently far enough away from it, 
 		// it should drop aggro.
 		CheckAggro();
@@ -59,6 +63,7 @@ public class Player : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.LeftArrow))  { TurnLeft();  movingLeft  = true; }
 		if (Input.GetKeyDown(KeyCode.RightArrow)) { TurnRight(); movingRight = true; }
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
+		if (Input.GetKeyDown(KeyCode.A))          Attack();
 
 
 		//------------------------------------------------------------------------------------------
@@ -78,6 +83,35 @@ public class Player : MonoBehaviour {
 
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// INVINCIBILITY
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void StartInvincibility() {
+		invincible = true;
+		invincibleStartFrame = Time.frameCount;
+	}
+
+	public void EndInvincibility() {
+		invincible = false;
+		invincibleStartFrame = -1;
+	}
+
+	public void CheckInvincibility() {
+		if (invincible) {
+			if ( (Time.frameCount - invincibleStartFrame) > invincibilityFrames) {
+				invincible = false;
+			}
+		}
+	}
+
+	public bool IsInvincible() {
+		return invincible;
+	}
+
+	public int GetFramesSinceInvincible() {
+		return Time.frameCount - invincibleStartFrame;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// GROUNDEDNESS
@@ -139,12 +173,12 @@ public class Player : MonoBehaviour {
 	}
 
 	public void InflictDamage(int damage, Vector2 direction, float strength) {
-		if (Time.frameCount - lastHitFrame > hitstunFrameCount) {
+		if (! invincible) {
 			status.SpendHealth(damage);
 
 			rb.AddForce(direction * strength, ForceMode2D.Impulse);
 
-			lastHitFrame = Time.frameCount;
+			StartInvincibility();
 
 			// TODO -- Check for game overs?
 		}
@@ -165,8 +199,8 @@ public class Player : MonoBehaviour {
 	//// MOVEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Jump() {
-		// Only allow jumping if we're grounded
-		if (grounded) {
+		// Only allow jumping if we're grounded and not attacking
+		if (grounded && !attacking) {
 			Vector2 initialVelocity = rb.velocity;
 			initialVelocity.y = jumpingVelocity;
 			rb.velocity = initialVelocity;	
@@ -177,31 +211,35 @@ public class Player : MonoBehaviour {
 	}
 
 	public void MoveLeft() {
-		Vector3 velocity = rb.velocity;
-		if (grounded) velocity.x += -1f * movementSpeed;
-		else          velocity.x += -1f * aerialDrift;
-		
-		if (velocity.x < -1f * maxSpeed) velocity.x = -1f * maxSpeed;
+		if (!attacking) {
+			Vector3 velocity = rb.velocity;
+			if (grounded) velocity.x += -1f * movementSpeed;
+			else          velocity.x += -1f * aerialDrift;
+			
+			if (velocity.x < -1f * maxSpeed) velocity.x = -1f * maxSpeed;
 
-		rb.velocity = velocity;
+			rb.velocity = velocity;
+		}
 	}
 
 	public void MoveRight() {
-		Vector3 velocity = rb.velocity;
-		if (grounded) velocity.x += movementSpeed;
-		else          velocity.x += aerialDrift;
-		
-		if (velocity.x > maxSpeed) velocity.x = maxSpeed;
+		if (!attacking) {
+			Vector3 velocity = rb.velocity;
+			if (grounded) velocity.x += movementSpeed;
+			else          velocity.x += aerialDrift;
+			
+			if (velocity.x > maxSpeed) velocity.x = maxSpeed;
 
-		rb.velocity = velocity;
+			rb.velocity = velocity;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// SPRITE ANIMATION
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private void UpdateAnimationState() {
-		if (Time.frameCount - lastHitFrame < hitstunFrameCount) {
-			animator.SetState(PlayerAnimator.State.Stun);
+		if (attacking) {
+			animator.SetState(PlayerAnimator.State.Attack1);			
 		}
 		else if (!grounded) {
 			animator.SetState(PlayerAnimator.State.Jump);
@@ -221,6 +259,16 @@ public class Player : MonoBehaviour {
 		animator.TurnRight();
 	}
 	public void Crouch()    {
+	}
+
+	public void Attack() {
+		animator.SetState(PlayerAnimator.State.Attack1);
+		attacking = true;
+	}
+
+	public void EndAttack() {
+		attacking = false;
+		UpdateAnimationState();
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
