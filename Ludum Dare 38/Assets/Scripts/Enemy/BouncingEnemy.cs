@@ -18,11 +18,15 @@ public class BouncingEnemy : Enemy {
 
 		// Check for groundedness.
 		Collider2D collider = Physics2D.OverlapBox (new Vector2 (transform.position.x, 
-			                      transform.position.y), new Vector2 (0.6f, 0.2f), 0f, layerMask);
+		                                                         // Note we want to create the box
+		                                                         // at the bottom of the enemy, 
+		                                                         // not the enemy's center!
+		                                                         transform.position.y - 0.5f),
+		                                            new Vector2 (0.6f, 0.2f), 0f, layerMask);
 		
 		if (collider != null) {
 			grounded = true;
-			Debug.Log ("grounded");
+			Debug.Log ("grounded on " + collider.gameObject.name, collider.gameObject);
 		} else {
 			grounded = false;
 		}

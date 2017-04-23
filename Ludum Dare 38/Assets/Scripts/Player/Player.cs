@@ -84,7 +84,8 @@ public class Player : MonoBehaviour {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private void CheckGrounded() {
 		LayerMask groundLayer = LayerMask.NameToLayer("Ground");
-		int layerMask = 1 << groundLayer.value;
+		LayerMask enemyLayer  = LayerMask.NameToLayer("Enemy");
+		int layerMask = (1 << groundLayer.value) | (1 << enemyLayer.value);
 
 		// Check for groundedness
 		Vector3 footPosition = transform.position + (directionTowardsFeet * distanceToFeet);

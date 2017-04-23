@@ -2012,7 +2012,7 @@ GameObject:
   m_Component:
   - component: {fileID: 286214358}
   - component: {fileID: 286214359}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4432,7 +4432,7 @@ GameObject:
   - component: {fileID: 521179648}
   - component: {fileID: 521179647}
   - component: {fileID: 521179649}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8735,7 +8735,7 @@ GameObject:
   - component: {fileID: 893005072}
   - component: {fileID: 893005071}
   - component: {fileID: 893005070}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9778,7 +9778,7 @@ GameObject:
   - component: {fileID: 946703142}
   - component: {fileID: 946703141}
   - component: {fileID: 946703140}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9792,7 +9792,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 946703138}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.79, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1901533032}
@@ -14015,7 +14015,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1425759339}
   - component: {fileID: 1425759340}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16322,7 +16322,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1669431721}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.67, y: 12.62, z: 0}
+  m_LocalPosition: {x: -21.46, y: 12.62, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_Children:
   - {fileID: 1755536876}
@@ -18541,7 +18541,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1901533032}
   - component: {fileID: 1901533033}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
