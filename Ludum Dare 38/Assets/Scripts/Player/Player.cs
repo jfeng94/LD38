@@ -160,7 +160,7 @@ public class Player : MonoBehaviour {
 	void OnTriggerExit2D(Collider2D collider)
 	{
 	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
-	 	if (interactable == currentInteractable) {
+	 	if (interactable != null && interactable == currentInteractable) {
 	 		Debug.Log("currentInteractable unset from  " + interactable, interactable);
 	 		currentInteractable = null;
 	 	}

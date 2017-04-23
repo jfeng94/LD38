@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour {
 	public Vector3 spawnPosition = Vector3.zero;
 
 	// How far away from the enemy's spawn is it willing to go.
-	public float leashLength = 5f;
+	public float leashLength = 20f;
 
 	public float movementSpeed = 4f;
 
