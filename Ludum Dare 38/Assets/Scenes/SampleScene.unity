@@ -1375,6 +1375,7 @@ GameObject:
   m_Component:
   - component: {fileID: 206729710}
   - component: {fileID: 206729711}
+  - component: {fileID: 206729712}
   m_Layer: 0
   m_Name: Stun
   m_TagString: Untagged
@@ -1430,6 +1431,21 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+--- !u!114 &206729712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 206729709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80b343f379f1c3542ac062bd674a3be8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 206729711}
+  tint1: {r: 1, g: 0, b: 0, a: 1}
+  tint2: {r: 1, g: 0.8482758, b: 0, a: 0.872}
+  blinkSpeed: 0.2
 --- !u!1 &224310599
 GameObject:
   m_ObjectHideFlags: 0
@@ -4532,7 +4548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  knockbackStrength: 20
+  knockbackStrength: 10
 --- !u!1 &525963287
 GameObject:
   m_ObjectHideFlags: 0
@@ -8210,6 +8226,7 @@ MonoBehaviour:
   jump: {fileID: 671865802}
   stun: {fileID: 206729711}
   defaultFacingLeft: 1
+  storedState: -1
 --- !u!1 &852793829
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,8 +16,8 @@ public class Player : MonoBehaviour {
 	private bool movingRight = false;
 
 	// Hitstun state variables
-	private int lastHitFrame = -1;
-	private int hitstunFrameCount = 5; 
+	private const int hitstunFrameCount = 60; 
+	private int lastHitFrame = -1 * hitstunFrameCount;
 
 	private Interactable currentInteractable = null;
 
@@ -87,7 +87,7 @@ public class Player : MonoBehaviour {
 		colliderVisualizer.transform.localScale = new Vector3(0.6f, 0.2f, 1f);
 
 
-		if (collider != null && rb.velocity.y >= 0) {
+		if (collider != null && rb.velocity.y <= 0) {
 			grounded = true;
 		}
 		else grounded = false;
@@ -105,7 +105,6 @@ public class Player : MonoBehaviour {
 		if (Time.frameCount - lastHitFrame > hitstunFrameCount) {
 			status.SpendHealth(damage);
 
-			Debug.Log("InflictDamage force added: " + direction + " - " + strength);
 			rb.AddForce(direction * strength, ForceMode2D.Impulse);
 
 			lastHitFrame = Time.frameCount;
@@ -171,7 +170,6 @@ public class Player : MonoBehaviour {
 			animator.SetState(PlayerAnimator.State.Jump);
 		}
 		else if (movingLeft ^ movingRight) {
-			Debug.Log("movingLeft is " + movingLeft + " --- movingRight is " + movingRight);
 			animator.SetState(PlayerAnimator.State.Walk);
 		}
 		else {
@@ -191,7 +189,6 @@ public class Player : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D collider) {
 	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
 	 	if (interactable != null) {
-	 		Debug.Log("currentInteractable set to " + interactable, interactable);
 	 		currentInteractable = interactable;
 	 	}
 	}
@@ -200,7 +197,6 @@ public class Player : MonoBehaviour {
 	{
 	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
 	 	if (interactable != null && interactable == currentInteractable) {
-	 		Debug.Log("currentInteractable unset from  " + interactable, interactable);
 	 		currentInteractable = null;
 	 	}
 	}
