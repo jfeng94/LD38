@@ -37,6 +37,9 @@ public class Player : MonoBehaviour {
 	// How much the user can affect their aerial trajectory.
 	private float aerialDrift = 0.5f;
 
+	// List of all enemies that currently hold aggro on the player
+	private List<Enemy> enemiesWithAggro = new List<Enemy>();
+
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
@@ -45,6 +48,10 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		CheckGrounded();
+
+		// Go through all enemies with aggro. If we're sufficiently far enough away from it, 
+		// it should drop aggro.
+		CheckAggro();
 
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS DOWN
@@ -68,6 +75,7 @@ public class Player : MonoBehaviour {
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
 
 		UpdateAnimationState();
+
 	}
 
 
@@ -93,6 +101,34 @@ public class Player : MonoBehaviour {
 		else grounded = false;
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// ENEMY AGGRO
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	private void CheckAggro() {
+		List<Enemy> deAggroList = new List<Enemy>();
+		for (int i = 0; i < enemiesWithAggro.Count; i++) {
+			Vector3 displacement = enemiesWithAggro[i].transform.position - transform.position;
+			if (displacement.magnitude > enemiesWithAggro[i].aggroRange) {
+				deAggroList.Add(enemiesWithAggro[i]);
+			}
+		}
+
+		for (int i = 0; i < deAggroList.Count; i++) {
+			deAggroList[i].RemoveAggro(this);
+			enemiesWithAggro.Remove(deAggroList[i]);
+		}		
+	}
+	
+	public List<Enemy> GetAggroEnemies() {
+		return enemiesWithAggro;
+	}
+
+	public void AddEnemyAggro(Enemy enemy) {
+		if (!enemiesWithAggro.Contains(enemy)) {
+			enemiesWithAggro.Add(enemy);
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// COMBAT AND DAMAGE

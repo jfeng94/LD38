@@ -40,6 +40,12 @@ public class WarpTrigger : WarpObject {
 		Vector3 displacement = position - oldPosition;
 		Camera.main.transform.position += displacement;
 
+		// Move all enemies with aggro on the character.
+		List<Enemy> enemies = player.GetAggroEnemies();
+		for (int i = 0; i < enemies.Count; i++) {
+			enemies[i].transform.position += displacement;
+		}
+
 		// Clean up any references to the player we may be holding onto.
 		playerToWarp = null;
 	}

@@ -50,12 +50,31 @@ public class Enemy : MonoBehaviour {
 	public virtual void OnTriggerEnter2D(Collider2D other) {
 		Player player = other.gameObject.GetComponent<Player>();
 		if (player != null) {
-			aggroTarget = player;
+			SetAggro(player);
 			ShowIndicator();
 			Invoke("HideIndicator", 1f);
 		}
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// AGGRO MANAGEMENT
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public float aggroRange = 10f;
+
+	public void SetAggro(Player player) {
+		if (player != null) {
+			aggroTarget = player;
+			aggroTarget.AddEnemyAggro(this);
+		}
+	}
+
+	public void RemoveAggro(Player player) {
+		if (player == aggroTarget) {
+			Debug.Log("Enemy lost aggro", this);
+			aggroTarget = null;
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// 
@@ -73,9 +92,9 @@ public class Enemy : MonoBehaviour {
 	}
 
 	protected virtual void MoveTowardsPosition(Vector3 position) {
-		Vector3 displacement = position - transform.position;
+		float displacement = position.x - transform.position.x;
 
-		if (displacement.magnitude < 0.2f) {
+		if (Mathf.Abs(displacement) < 0.2f) {
 			return;
 		}
 
@@ -83,7 +102,7 @@ public class Enemy : MonoBehaviour {
 		if (rb != null) {
 			Vector3 velocity = rb.velocity;
 			velocity.x = movementSpeed;
-			if (displacement.x < 0f) {
+			if (displacement < 0f) {
 				velocity.x *= -1f;
 			}
 
