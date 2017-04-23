@@ -15,8 +15,8 @@ public class HUD : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		int health = player.status.GetHealth();
-		int mana   = player.status.GetMana();
+		int health = player.GetHealth();
+		int mana   = player.GetMana();
 
 		healthBar.SetValue(health);
 		manaBar.SetValue(mana);

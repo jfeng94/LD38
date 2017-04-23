@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Serves as a public interface for all the various components that make up a player.
-public class Player : MonoBehaviour {
-	public PlayerStatus   status;
+public class Player : Character {
 	public PlayerAnimator animator;
 
-	private Rigidbody2D rb;
 	private float jumpingVelocity = 20f;
 
 	// Movement state flags
-	private bool grounded    = true;
 	private bool movingLeft  = false;
 	private bool movingRight = false;
 	private bool attacking   = false;
@@ -23,33 +20,12 @@ public class Player : MonoBehaviour {
 
 	private Interactable currentInteractable = null;
 
-	// Direction from center of player game object to feet.
-	private Vector3 directionTowardsFeet = Vector3.down;
-	// Distance from center of player game object to feet.
-	private float distanceToFeet = 0.8f;
-
-	public GameObject colliderVisualizer;
-
-	// How fast the player can possibly move
-	private float maxSpeed = 5f;
-
-	// How much the user accelerates per frame while holding a direction
-	private float movementSpeed = 1f;
-
-	// How much the user can affect their aerial trajectory.
-	private float aerialDrift = 0.5f;
-
 	// List of all enemies that currently hold aggro on the player
 	private List<Enemy> enemiesWithAggro = new List<Enemy>();
 
-	// Use this for initialization
-	void Start () {
-		rb = GetComponent<Rigidbody2D>();
-	}
-	
 	// Update is called once per frame
-	void Update () {
-		CheckGrounded();
+	protected override void Update () {
+		base.Update();
 
 		CheckInvincibility();
 
@@ -85,6 +61,16 @@ public class Player : MonoBehaviour {
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// GROUNDEDNESS
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	protected override int GetGroundedLayerMask() {
+		LayerMask groundLayer = LayerMask.NameToLayer("Ground");
+		LayerMask enemyLayer  = LayerMask.NameToLayer("Enemy");
+		int layerMask = (1 << groundLayer.value) | (1 << enemyLayer.value);
+		return layerMask;
+	} 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// INVINCIBILITY
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void StartInvincibility() {
@@ -113,28 +99,6 @@ public class Player : MonoBehaviour {
 		return Time.frameCount - invincibleStartFrame;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	//// GROUNDEDNESS
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	private void CheckGrounded() {
-		LayerMask groundLayer = LayerMask.NameToLayer("Ground");
-		LayerMask enemyLayer  = LayerMask.NameToLayer("Enemy");
-		int layerMask = (1 << groundLayer.value) | (1 << enemyLayer.value);
-
-		// Check for groundedness
-		Vector3 footPosition = transform.position + (directionTowardsFeet * distanceToFeet);
-		Collider2D collider = Physics2D.OverlapBox(new Vector2(footPosition.x, footPosition.y),
-		                                           new Vector2(0.6f, 0.2f), 0f, layerMask);
-
-		colliderVisualizer.transform.position = footPosition;
-		colliderVisualizer.transform.localScale = new Vector3(0.6f, 0.2f, 1f);
-
-
-		if (collider != null && rb.velocity.y <= 0) {
-			grounded = true;
-		}
-		else grounded = false;
-	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,15 +132,9 @@ public class Player : MonoBehaviour {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// COMBAT AND DAMAGE
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	public void Heal(int heal) {
-		status.GainHealth(heal);
-	}
-
-	public void InflictDamage(int damage, Vector2 direction, float strength) {
+	public override void InflictDamage(int damage, Vector2 direction, float strength) {
 		if (! invincible) {
-			status.SpendHealth(damage);
-
-			rb.AddForce(direction * strength, ForceMode2D.Impulse);
+			base.InflictDamage(damage, direction, strength);
 
 			StartInvincibility();
 

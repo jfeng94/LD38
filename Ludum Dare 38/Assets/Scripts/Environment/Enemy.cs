@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : Character {
 	public GameObject indicator;
 
 	private Player aggroTarget = null;
@@ -13,15 +13,16 @@ public class Enemy : MonoBehaviour {
 	// How far away from the enemy's spawn is it willing to go.
 	public float leashLength = 20f;
 
-	public float movementSpeed = 4f;
-
 	// Use this for initialization
-	public void Start () {
+	protected override void Start () {
+		base.Start();
 		spawnPosition = transform.position;
 	}
 	
 	// Update is called once per frame
-	public virtual void Update () {
+	protected override void Update () {
+		base.Update();
+
 		// Get distance from spawn
 		float distanceFromSpawn = (transform.position - spawnPosition).magnitude;
 
