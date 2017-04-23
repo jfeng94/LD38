@@ -12,4 +12,16 @@ public class PlayerHitbox : Hitbox {
 
 		return false;
 	}
+
+	public override void OnCollisionEnter2D(Collision2D collision) {
+		base.OnCollisionEnter2D(collision);
+	}
+
+	public override void OnCollisionStay2D(Collision2D collision) {
+		base.OnCollisionStay2D(collision);
+	}
+
+	public void OnCollisionExit2D(Collision2D collision) {
+		base.OnCollisionStay2D(collision);
+	}
 }

@@ -214,10 +214,14 @@ public class Player : Character {
 	}
 
 	public void TurnLeft()  {
-		animator.TurnLeft();
+		if (!attacking) {
+			animator.TurnLeft();
+		}
 	}
 	public void TurnRight() {
-		animator.TurnRight();
+		if (!attacking) {
+			animator.TurnRight();
+		}
 	}
 	public void Crouch()    {
 	}

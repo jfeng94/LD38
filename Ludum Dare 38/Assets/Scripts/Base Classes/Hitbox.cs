@@ -3,8 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Hitbox : MonoBehaviour {
+	public Vector3    localPosition;
+	public Quaternion localRotation;
+
 	public int   damage = 1;
 	public float knockbackStrength = 20f;
+
+	void Start() {
+		localPosition = transform.localPosition;
+		localRotation = transform.localRotation;
+	}
+
+	void LateUpdate() {
+		// Keep the rigidbody from falling away from the player object
+		transform.localPosition = localPosition; 
+		transform.localRotation = localRotation; 
+	}
 
 	protected virtual bool IsValidTarget(IHittable hittable) {
 		return false;
@@ -29,11 +43,11 @@ public class Hitbox : MonoBehaviour {
 		}
 	}
 
-	public void OnCollisionEnter2D(Collision2D collision) {
+	public virtual void OnCollisionEnter2D(Collision2D collision) {
 		InflictDamage(collision);
 	}
 
-	public void OnCollisionStay2D(Collision2D collision) {
+	public virtual void OnCollisionStay2D(Collision2D collision) {
 		InflictDamage(collision);
 	}
 

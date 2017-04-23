@@ -9,8 +9,20 @@ public class EnemyHitbox : Hitbox {
 		if ( (hitObject as Player) != null) {
 			return true;
 		}
-
 		return false;
 	}
 
+	public override void OnCollisionEnter2D(Collision2D collision) {
+		//# if (collision.gameObject.name != "Floor") {
+		//# 	Debug.LogError("EnemyHitbox::OnCollisionEnter2D: " + collision.gameObject.name, collision.rigidbody);
+		//# }
+		base.OnCollisionEnter2D(collision);
+	}
+
+	public override void OnCollisionStay2D(Collision2D collision) {
+		//# if (collision.gameObject.name != "Floor") {
+		//# 	Debug.Log("EnemyHitbox::OnCollisionStay2D: " + collision.gameObject.name, collision.rigidbody);
+		//# }
+		base.OnCollisionStay2D(collision);
+	}
 }

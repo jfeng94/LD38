@@ -75,17 +75,29 @@ public class PlayerAnimator : MonoBehaviour {
 	//// FACING MANAGEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void TurnLeft() {
-		if (idle    != null)    idle.flipX = defaultFacingLeft;
-		if (walk    != null)    walk.flipX = defaultFacingLeft;
-		if (jump    != null)    jump.flipX = defaultFacingLeft;
-		if (attack1 != null) attack1.flipX = defaultFacingLeft;
+		//# if (idle    != null)    idle.flipX = defaultFacingLeft;
+		//# if (walk    != null)    walk.flipX = defaultFacingLeft;
+		//# if (jump    != null)    jump.flipX = defaultFacingLeft;
+		//# if (attack1 != null) attack1.flipX = defaultFacingLeft;
+		if (defaultFacingLeft) {
+			transform.localScale = new Vector3(-1, 1, 1);
+		}
+		else {
+			transform.localScale = new Vector3(1, 1, 1);
+		}
 	}
 
 	public void TurnRight() {
-		if (idle    != null)    idle.flipX = ! defaultFacingLeft;
-		if (walk    != null)    walk.flipX = ! defaultFacingLeft;
-		if (jump    != null)    jump.flipX = ! defaultFacingLeft;
-		if (attack1 != null) attack1.flipX = ! defaultFacingLeft;
+		//# if (idle    != null)    idle.flipX = ! defaultFacingLeft;
+		//# if (walk    != null)    walk.flipX = ! defaultFacingLeft;
+		//# if (jump    != null)    jump.flipX = ! defaultFacingLeft;
+		//# if (attack1 != null) attack1.flipX = ! defaultFacingLeft;
+		if (defaultFacingLeft) {
+			transform.localScale = new Vector3(1, 1, 1);
+		}
+		else {
+			transform.localScale = new Vector3(-1, 1, 1);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
