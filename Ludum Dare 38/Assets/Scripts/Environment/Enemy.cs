@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Interactable {
+public class Enemy : MonoBehaviour {
+	public GameObject indicator;
+
 	private Player aggroTarget = null;
 
 	// Where the enemy spawns at
@@ -11,10 +13,10 @@ public class Enemy : Interactable {
 	// How far away from the enemy's spawn is it willing to go.
 	public float leashLength = 5f;
 
-	public float movementSpeed = 0.1f;
+	public float movementSpeed = 4f;
 
 	// Use this for initialization
-	public override void Start () {
+	public void Start () {
 		spawnPosition = transform.position;
 	}
 	
@@ -26,14 +28,14 @@ public class Enemy : Interactable {
 		// Follow the player if they are holding aggro
 		if (aggroTarget != null) {
 			// If the enemy is sufficiently far from the spawn position, lose aggro
-			if (distanceFromSpawn > leashLength) {
-				aggroTarget = null;
-			}
+			//# if (distanceFromSpawn > leashLength) {
+			//# 	aggroTarget = null;
+			//# }
 
 			// Otherwise, move towards the player
-			else {
+			//# else {
 				MoveTowardsPosition(aggroTarget.transform.position);
-			}
+			//# }
 		}
 
 		// If there is no aggro, move towards the spawn point
@@ -42,25 +44,51 @@ public class Enemy : Interactable {
 		}
 	}
 
-	public override void OnPlayerCanInteract(Player player) {
-		base.OnPlayerCanInteract(player);
-
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// PHYSICS
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public virtual void OnTriggerEnter2D(Collider2D other) {
+		Player player = other.gameObject.GetComponent<Player>();
 		if (player != null) {
 			aggroTarget = player;
+			ShowIndicator();
+			Invoke("HideIndicator", 1f);
 		}
 	}
 
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	private void ShowIndicator() {
+		if (indicator != null) {
+			indicator.SetActive(true);
+		}
+	}
+
+	private void HideIndicator() {
+		if (indicator != null) {
+			indicator.SetActive(false);
+		}
+	}
+
 	protected virtual void MoveTowardsPosition(Vector3 position) {
 		Vector3 displacement = position - transform.position;
 
-		// Get rid of any vertical component
-		displacement.y = 0;
+		if (displacement.magnitude < 0.2f) {
+			return;
+		}
 
-		// Turn displacement into a direction
-		Vector3 direction = displacement.normalized;
+		Rigidbody2D rb = GetComponent<Rigidbody2D>();
+		if (rb != null) {
+			Vector3 velocity = rb.velocity;
+			velocity.x = movementSpeed;
+			if (displacement.x < 0f) {
+				velocity.x *= -1f;
+			}
 
-		// Move towards the player
-		transform.position += (direction * movementSpeed);
+			rb.velocity = velocity;
+		}
+
 	}
 }
