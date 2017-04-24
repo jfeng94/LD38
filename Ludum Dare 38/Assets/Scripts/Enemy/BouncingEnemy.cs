@@ -6,32 +6,6 @@ public class BouncingEnemy : Enemy {
 
 	public float jumpingVelocity = 20f;
 
-	//# private bool grounded = true;
-	//# public override void Update() {
-	//# 	UpdateGroundedness();
-	//# 	base.Update();
-	//# }
-
-	//# private void UpdateGroundedness() {
-	//# 	LayerMask groundLayer = LayerMask.NameToLayer ("Ground");
-	//# 	int layerMask = 1 << groundLayer.value;
-
-	//# 	// Check for groundedness.
-	//# 	Collider2D collider = Physics2D.OverlapBox (new Vector2 (transform.position.x, 
-	//# 	                                                         // Note we want to create the box
-	//# 	                                                         // at the bottom of the enemy, 
-	//# 	                                                         // not the enemy's center!
-	//# 	                                                         transform.position.y - 0.5f),
-	//# 	                                            new Vector2 (0.6f, 0.2f), 0f, layerMask);
-		
-	//# 	if (collider != null) {
-	//# 		grounded = true;
-	//# 		Debug.Log ("grounded on " + collider.gameObject.name, collider.gameObject);
-	//# 	} else {
-	//# 		grounded = false;
-	//# 	}
-	//# }
-	
 	protected override void MoveTowardsPosition(Vector3 position) {
 		Vector3 displacement = position - transform.position;
 
@@ -43,9 +17,10 @@ public class BouncingEnemy : Enemy {
 				velocity.x = 0;
 			} else {
 				Debug.Log ("trying to move");
-				velocity.x = movementSpeed;
-				if (displacement.x < 0f) {
-					velocity.x *= -1f;
+				velocity.x += Mathf.Sign(displacement.x) * movementSpeed;
+
+				if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement.x)) {
+					velocity.x = Mathf.Sign(displacement.x) * maxSpeed;
 				}
 			}
 
