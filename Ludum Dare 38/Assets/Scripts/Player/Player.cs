@@ -138,9 +138,11 @@ public class Player : Character {
 
 	public void Dash() {
 		if (!attacking) {
-			animator.SetState(PlayerAnimator.State.Dash);
-			dashing = true;
-			dashStartFrame = Time.frameCount;
+			//# if (hasMana) {
+				animator.SetState(PlayerAnimator.State.Dash);
+				dashing = true;
+				dashStartFrame = Time.frameCount;
+			//# }
 		}
 	}
 

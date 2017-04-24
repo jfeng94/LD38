@@ -48,6 +48,12 @@ public class Character : MonoBehaviour, IHittable {
 		}
 	}
 
+	protected bool hasMana {
+		get {
+			return mana <= 0;
+		}
+	}
+
 	// Use this for initialization
 	protected virtual void Start () {
 		rb = GetComponent<Rigidbody2D>();
@@ -206,7 +212,6 @@ public class Character : MonoBehaviour, IHittable {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// MANA
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	public int GetMana() {
 		return mana;
 	}
