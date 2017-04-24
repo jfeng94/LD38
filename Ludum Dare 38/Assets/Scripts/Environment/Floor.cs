@@ -48,6 +48,10 @@ public class Floor : MonoBehaviour {
 			int framesSinceSteppedOn = Time.frameCount - steppedOnFrame;
 
 			if (framesSinceSteppedOn > 0) {
+				// Get the sprite renderer to begin with.
+				SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+				Color color = new Color(1f, 1f, 1f, 1f);
+
 				//----------------------------------------------------------------------------------
 				// Get the number of frames left we have for each stage of the platform's life
 				//----------------------------------------------------------------------------------
@@ -72,33 +76,29 @@ public class Floor : MonoBehaviour {
 					goneRemaining    = numFramesGone;
 
 					steppedOnFrame = int.MaxValue;
+
+					if (spriteRenderer != null) {
+						spriteRenderer.color = Color.white;
+					}
 				}
 				
 				//----------------------------------------------------------------------------------
 				// Turn collider on or off based on whether fade out has finished.
 				//----------------------------------------------------------------------------------
 				BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
-				if (boxCollider != null) {
-					boxCollider.enabled = (fadeOutRemaining > 0);
-				}
+				if (boxCollider != null) boxCollider.enabled = (fadeOutRemaining > 0);
 
 				//----------------------------------------------------------------------------------
 				// Recolor the platform based on how much fade we have.
 				//----------------------------------------------------------------------------------
-				float transparency = 1f;
+				// If the user has even touched it, turn it blue.
+				if (stableRemaining != numFramesStable) color.r = 0.8f;  
 
-				if (fadeOutRemaining == 0) {
-					transparency = (float) (numFramesFadeIn - fadeInRemaining) / (float) numFramesFadeIn;
-				}
-				else {
-					transparency = (float) fadeOutRemaining / (float) numFramesFadeOut;
-				}
-				Color color = new Color(1f, 1f, 1f, transparency);
+				// Depending on the state of the fade values, fade the platform.
+				if (fadeOutRemaining == 0)  color.a = (float) (numFramesFadeIn - fadeInRemaining) / (float) numFramesFadeIn;
+				else                        color.a = (float) fadeOutRemaining / (float) numFramesFadeOut;
 
-				SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-				if (spriteRenderer != null) {
-					spriteRenderer.color = color;
-				}
+				if (spriteRenderer != null) spriteRenderer.color = color;
 
 				SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 				for (int i = 0; i < spriteRenderers.Length; i++) {

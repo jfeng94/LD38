@@ -7243,7 +7243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disappearing: 1
-  numFramesStable: 180
+  numFramesStable: 360
   numFramesFadeOut: 120
   numFramesGone: 60
   numFramesFadeIn: 120
@@ -11607,6 +11607,31 @@ Prefab:
     - target: {fileID: 1424270947993024, guid: a5b7e6271bcae4c49bbeb03f56e759c8, type: 2}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665804755555928, guid: a5b7e6271bcae4c49bbeb03f56e759c8,
+        type: 2}
+      propertyPath: maxHealth
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665804755555928, guid: a5b7e6271bcae4c49bbeb03f56e759c8,
+        type: 2}
+      propertyPath: maxMana
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665804755555928, guid: a5b7e6271bcae4c49bbeb03f56e759c8,
+        type: 2}
+      propertyPath: health
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665804755555928, guid: a5b7e6271bcae4c49bbeb03f56e759c8,
+        type: 2}
+      propertyPath: mana
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665804755555928, guid: a5b7e6271bcae4c49bbeb03f56e759c8,
+        type: 2}
+      propertyPath: maxSpeed
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 60725412337604548, guid: a5b7e6271bcae4c49bbeb03f56e759c8, type: 2}
