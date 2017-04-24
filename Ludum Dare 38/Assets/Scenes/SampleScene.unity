@@ -6430,6 +6430,7 @@ GameObject:
   - component: {fileID: 792748818}
   - component: {fileID: 792748820}
   - component: {fileID: 792748819}
+  - component: {fileID: 792748821}
   m_Layer: 9
   m_Name: Large Cloud
   m_TagString: Untagged
@@ -6497,6 +6498,27 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 25, y: 1}
+--- !u!114 &792748821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 792748817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0c3be5ea3f93c459dfdf23450d52a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  disappearing: 0
+  numFramesStable: 30
+  numFramesFadeOut: 120
+  numFramesGone: 180
+  numFramesFadeIn: 120
+  steppedOnFrame: 2147483647
+  moving: 0
+  pathNodes: []
+  currentNode: -1
+  speed: 3
 --- !u!1 &820456182
 GameObject:
   m_ObjectHideFlags: 0
