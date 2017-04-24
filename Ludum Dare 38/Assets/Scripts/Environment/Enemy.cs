@@ -23,29 +23,39 @@ public class Enemy : Character {
 	
 	// Update is called once per frame
 	protected override void Update () {
-		base.Update();
+		if (!isDead) {
+			base.Update();
 
-		// Get distance from spawn
-		float distanceFromSpawn = (transform.position - spawnPosition).magnitude;
+			// Get distance from spawn
+			float distanceFromSpawn = (transform.position - spawnPosition).magnitude;
 
-		// Follow the player if they are holding aggro
-		if (aggroTarget != null) {
-			// If the enemy is sufficiently far from the spawn position, lose aggro
-			//# if (distanceFromSpawn > leashLength) {
-			//# 	aggroTarget = null;
-			//# }
+			// Follow the player if they are holding aggro
+			if (aggroTarget != null) {
+				// If the enemy is sufficiently far from the spawn position, lose aggro
+				//# if (distanceFromSpawn > leashLength) {
+				//# 	aggroTarget = null;
+				//# }
 
-			// Otherwise, move towards the player
-			//# else {
-				MoveTowardsPosition(aggroTarget.transform.position);
-			//# }
-		}
+				// Otherwise, move towards the player
+				//# else {
+					MoveTowardsPosition(aggroTarget.transform.position);
+				//# }
+			}
 
-		// If there is no aggro, move towards the spawn point
-		if (aggroTarget == null) {
-			MoveTowardsPosition(spawnPosition);
+			// If there is no aggro, move towards the spawn point
+			if (aggroTarget == null) {
+				MoveTowardsPosition(spawnPosition);
+			}			
 		}
 	}
+
+	protected override void DieAHorribleDeath() {
+		animator.SetState(EnemyAnimator.State.Dead);
+
+		rb.velocity = Vector3.zero;
+		rb.angularVelocity = 0;
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// PHYSICS

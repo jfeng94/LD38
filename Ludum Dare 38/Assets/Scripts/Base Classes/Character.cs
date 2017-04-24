@@ -44,6 +44,12 @@ public class Character : MonoBehaviour, IHittable {
 	//----------------------------------------------------------------------------------------------
 	protected Rigidbody2D rb;
 
+	protected bool isDead {
+		get {
+			return health <= 0;
+		}
+	}
+
 	// Use this for initialization
 	protected virtual void Start () {
 		rb = GetComponent<Rigidbody2D>();
@@ -135,7 +141,7 @@ public class Character : MonoBehaviour, IHittable {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// DEATH
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	protected void DieAHorribleDeath() {
+	protected virtual void DieAHorribleDeath() {
 		gameObject.SetActive(false);
 	}
 
@@ -180,19 +186,21 @@ public class Character : MonoBehaviour, IHittable {
 		if (! invincible) {
 			DealDamage(damage);
 
-			if (rb != null) {
-				Debug.Log("InflictDamage imparted force in " + direction + " direction with " + strength + " strength");
-				rb.AddForce(direction * strength, ForceMode2D.Impulse);
-			}
-			else {
-				Debug.Log("InflictDamage Rigidbody2D is null?");
-			}
+			if (!isDead) {
+				if (rb != null) {
+					Debug.Log("InflictDamage imparted force in " + direction + " direction with " + strength + " strength");
+					rb.AddForce(direction * strength, ForceMode2D.Impulse);
+				}
+				else {
+					Debug.Log("InflictDamage Rigidbody2D is null?");
+				}
 
-			StartInvincibility();
+				StartInvincibility();
 
-			// TODO -- Check for game overs?
-			if (health <= 0) {
-				Debug.Log("Game Over!!!");
+				// TODO -- Check for game overs?
+				if (health <= 0) {
+					Debug.Log("Game Over!!!");
+				}
 			}
 		}
 	}
