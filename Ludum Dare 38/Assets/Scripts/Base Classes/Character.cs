@@ -59,6 +59,7 @@ public class Character : MonoBehaviour, IHittable {
 	// Use this for initialization
 	protected virtual void Start () {
 		rb = GetComponent<Rigidbody2D>();
+		rb.gravityScale = 0.8f;
 	}
 	
 	protected virtual void Update() {
