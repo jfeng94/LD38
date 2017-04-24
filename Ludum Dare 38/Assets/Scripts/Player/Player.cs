@@ -20,11 +20,12 @@ public class Player : Character {
 	// Animator and state flags state flags
 	//----------------------------------------------------------------------------------------------
 	public PlayerAnimator animator;
-	private bool dashing     = false;
-	private bool movingLeft  = false;
-	private bool movingRight = false;
-	private bool attacking   = false;
-	private bool facingLeft  = false;
+	private bool dashing         = false;
+	private bool movingLeft      = false;
+	private bool movingRight     = false;
+	private bool groundAttacking = false;
+	private bool aerialAttacking = false;
+	private bool facingLeft      = false;
 
 	//----------------------------------------------------------------------------------------------
 	// Passive idle regen
@@ -148,16 +149,25 @@ public class Player : Character {
 	//// ATTACKING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Attack() {
-		if (dashing) {
-			CancelDash();
-		}
+		if (!groundAttacking && !aerialAttacking) {
+			if (dashing) {
+				CancelDash();
+			}
 
-		animator.SetState(PlayerAnimator.State.Attack1);
-		attacking = true;
+			if (grounded) {	
+				animator.SetState(PlayerAnimator.State.GroundAttack);
+				groundAttacking = true;
+			}
+			else {
+				animator.SetState(PlayerAnimator.State.AerialAttack);
+				aerialAttacking = true;
+			}
+		}
 	}
 
 	public void EndAttack() {
-		attacking = false;
+		groundAttacking = false;
+		aerialAttacking = false;
 		UpdateAnimationState();
 	}
 
@@ -165,8 +175,8 @@ public class Player : Character {
 	//// DASHING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	protected void CheckDashing() {
-		if (attacking || (Time.frameCount - dashStartFrame > 0 && 
-		                  Time.frameCount - dashStartFrame > numFramesDashing) ) {
+		if (groundAttacking || aerialAttacking ||
+			(Time.frameCount - dashStartFrame > 0 && Time.frameCount - dashStartFrame > numFramesDashing) ) {
 			CancelDash();
 		}
 
@@ -181,7 +191,7 @@ public class Player : Character {
 	}
 
 	public void Dash() {
-		if (!attacking) {
+		if (!groundAttacking || !aerialAttacking) {
 			if (hasMana) {
 				animator.SetState(PlayerAnimator.State.Dash);
 				dashing = true;
@@ -258,8 +268,8 @@ public class Player : Character {
 	//// MOVEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Jump() {
-		// Only allow jumping if we're grounded and not attacking
-		if (grounded && !attacking) {
+		// Only allow jumping if we're grounded and not groundAttacking
+		if (grounded && !groundAttacking) {
 			Vector2 initialVelocity = rb.velocity;
 			initialVelocity.y = jumpingVelocity;
 			rb.velocity = initialVelocity;	
@@ -276,7 +286,7 @@ public class Player : Character {
 	private void Move(bool left) {
 		// Note that when the user dashes or attacks, they lock themselves into that animation.
 		// As a result, we block any 
-		if (!dashing && !attacking) {
+		if (!dashing && !groundAttacking) {
 			float sign = 1f;
 			if (left) sign = -1f;
 
@@ -295,9 +305,13 @@ public class Player : Character {
 	//// SPRITE ANIMATION
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private void UpdateAnimationState() {
-		if (attacking) {
-			animator.SetState(PlayerAnimator.State.Attack1);
+		if (groundAttacking) {
+			animator.SetState(PlayerAnimator.State.GroundAttack);
 			idleStartFrame = int.MaxValue;			
+		}
+		else if (aerialAttacking) {
+			animator.SetState(PlayerAnimator.State.AerialAttack);
+			idleStartFrame = int.MaxValue;		
 		}
 		else if (dashing) {
 			animator.SetState(PlayerAnimator.State.Dash);
@@ -321,14 +335,14 @@ public class Player : Character {
 	}
 
 	public void TurnLeft()  {
-		if (!attacking && !dashing) {
+		if (!groundAttacking && !aerialAttacking && !dashing) {
 			animator.TurnLeft();
 			facingLeft = true;
 		}
 	}
 
 	public void TurnRight() {
-		if (!attacking && !dashing) {
+		if (!groundAttacking && !aerialAttacking && !dashing) {
 			animator.TurnRight();
 			facingLeft = false;
 		}

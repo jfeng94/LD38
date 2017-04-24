@@ -4870,6 +4870,24 @@ Transform:
   m_PrefabParentObject: {fileID: 4361261042056314, guid: a5b7e6271bcae4c49bbeb03f56e759c8,
     type: 2}
   m_PrefabInternal: {fileID: 1420513699}
+--- !u!1 &513431511 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1118677488133178, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
+    type: 2}
+  m_PrefabInternal: {fileID: 1537066241}
+--- !u!114 &513431512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 513431511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbdff11c1e3c4b94192c3b39c7fd8dec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 7
+  animator: {fileID: 1414815111}
 --- !u!1 &521122667
 GameObject:
   m_ObjectHideFlags: 0
@@ -12507,6 +12525,12 @@ Transform:
   m_Father: {fileID: 1612485603}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1414815111 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114999048436117328, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
+    type: 2}
+  m_PrefabInternal: {fileID: 1537066241}
+  m_Script: {fileID: 11500000, guid: 310d5748ec35ee74f84c07278064cd70, type: 3}
 --- !u!1 &1417045832
 GameObject:
   m_ObjectHideFlags: 0
@@ -13833,40 +13857,6 @@ Prefab:
     - target: {fileID: 4242697143800318, guid: d0d16f8ffe06c9943ba9317ca3c46e53, type: 2}
       propertyPath: m_RootOrder
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1983212544512620, guid: d0d16f8ffe06c9943ba9317ca3c46e53, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114113380138140690, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
-        type: 2}
-      propertyPath: dashingVelocity
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114113380138140690, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
-        type: 2}
-      propertyPath: numFramesDashing
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 114113380138140690, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
-        type: 2}
-      propertyPath: maxMana
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 114113380138140690, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
-        type: 2}
-      propertyPath: mana
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 50249848395828714, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
-        type: 2}
-      propertyPath: m_LinearDrag
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114113380138140690, guid: d0d16f8ffe06c9943ba9317ca3c46e53,
-        type: 2}
-      propertyPath: jumpingVelocity
-      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d0d16f8ffe06c9943ba9317ca3c46e53, type: 2}
