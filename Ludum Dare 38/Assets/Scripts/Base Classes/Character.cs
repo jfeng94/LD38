@@ -25,8 +25,6 @@ public class Character : MonoBehaviour, IHittable {
 	// Whether the character is touching the ground
 	protected bool grounded = true;
 
-	public GameObject colliderVisualizer;
-
 	//----------------------------------------------------------------------------------------------
 	// Movement
 	//----------------------------------------------------------------------------------------------

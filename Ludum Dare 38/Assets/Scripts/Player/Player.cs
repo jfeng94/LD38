@@ -204,6 +204,10 @@ public class Player : Character {
 	 	IInteractable interactable = collider.gameObject.GetComponent<IInteractable>();
 	 	if (interactable != null) {
 	 		if (interactable.CanInteract()) {
+	 			if (currentInteractable != null) {
+	 				currentInteractable.StopSignaling();
+	 			}
+
 		 		currentInteractable = interactable;
 		 		currentInteractable.StartSignaling();
 	 		}

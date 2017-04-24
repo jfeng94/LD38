@@ -10,14 +10,21 @@ public class NPC : Character, IInteractable {
 
 	public NPCAnimator animator;
 
-	// If followPath is true, this NPC will walk towards the nodes specified in pathNodes. As it 
+	// If walkAround is true, this NPC will walk towards the nodes specified in pathNodes. As it 
 	// arrives at each node, it will wait for a random number of frames (from minWaitFrames to 
-	// maxWaitFrames)
+	// maxWaitFrames).
+	//
+	// To specify a path, pass the NPC an object whose children are the nodes of the path.
+	//
+	// If randomWalk is true, the NPC will walk to a random node each time.
 	// When it reaches the end of the nodes list, it will wrap around to the first node.
-	public bool followPath = false;
-	public List<GameObject> pathNodes = new List<GameObject>();
+	public bool walkAround = true;
+	public bool randomWalk = true;
 	public int minWaitFrames = 10;
 	public int maxWaitFrames = 60;
+	public GameObject pathParent;
+
+	private List<GameObject> pathNodes = new List<GameObject>();
 	private int pathIndex = 0;
 	private int waitStartFrame = int.MinValue;
 	private int waitFrameDuration = 0;
@@ -26,18 +33,28 @@ public class NPC : Character, IInteractable {
 	protected override void Start() {
 		base.Start();
 
+		if (indicator != null) {
+			indicator.SetActive(false);
+		}
+
 		if (textBubble != null) {
 			textBubble.SetActive(false);
+		}
+
+		// Populates the path list for us.
+		if (pathParent != null) {
+			foreach (Transform child in pathParent.transform) {
+				pathNodes.Add(child.gameObject);		
+			}
 		}
 	}
 
 	protected override void Update() {
-		if (followPath) {
+		if (walkAround && pathNodes.Count != 0) {
 			// Note we don't call base!
 			if (Time.frameCount - waitStartFrame > 0 &&
 			    Time.frameCount - waitStartFrame < waitFrameDuration) {
 				// Do nothing. We wait.
-				Debug.Log("Do nothing?");
 			}
 			else {
 				waitFrameDuration = 0;
@@ -93,7 +110,21 @@ public class NPC : Character, IInteractable {
 				rb.velocity = velocity;
 
 				int numNodes = pathNodes.Count;
-				pathIndex = (((pathIndex + 1) % numNodes) + numNodes) % numNodes;
+
+				if (randomWalk) {
+					int newIndex = RNG.Next(0, numNodes - 1);
+
+					if (newIndex == pathIndex) {
+						newIndex = newIndex - 1;
+					}
+
+					pathIndex = newIndex;
+				}
+				else {
+					pathIndex = pathIndex + 1;
+				}
+
+				pathIndex = (((pathIndex) % numNodes) + numNodes) % numNodes;
 
 				waitFrameDuration = RNG.Next(minWaitFrames, maxWaitFrames);
 				waitStartFrame = Time.frameCount;
