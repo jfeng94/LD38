@@ -22,17 +22,22 @@ public class Floor : MonoBehaviour {
 	public int  numFramesGone    = 180;
 	public int  numFramesFadeIn  = 120;
 
-	public int steppedOnFrame  = int.MaxValue;
+	public int steppedOnFrame = int.MaxValue;
 
 	//----------------------------------------------------------------------------------------------
 	// MOVING PLATFORM VARIABLES
+	// If moving is true, the platform will move along the GameObject nodes that we specify in the
+	// editor. Note that we should only be using empty game objects as nodes, as the floor will 
+	// disable any path nodes it holds onto.  
 	//----------------------------------------------------------------------------------------------
 	public bool moving = false;
+	public List<GameObject> pathNodes = new List<GameObject>();
+	public int currentNode = -1;
+	public float speed = 3f;
 
 	void Update() {
 		UpdateDisappearing();
 	}
-
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// DISAPPEARING PLATFORMS
@@ -102,16 +107,21 @@ public class Floor : MonoBehaviour {
 					}			
 				}
 			}
-
-
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// MOVING PLATFORM
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	private int PosOrZero(int value) {
 		value = (value < 0) ? 0 : value; 
 		return value;
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// COLLIDERS
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void OnCollisionEnter2D(Collision2D collision) {
 		Player player = collision.gameObject.GetComponent<Player>();
 

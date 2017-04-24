@@ -2,32 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-// This class helps the player avatar transition through any animations changes the it will undergo.
-// Should be pretty tightly linked to PlayerMovement.cs
-public class PlayerAnimator : MonoBehaviour {
-	public Player player;
+// basically totally copied over from player animator.
+public class EnemyAnimator : MonoBehaviour {
+	public Enemy enemy;
 
 	public enum State {
 		Undefined,
 		Idle,
 		Walk,
-		Jump,
-		Attack1,
+		Dead,
 	}
 
 	public SpriteRenderer idle;
 	public SpriteRenderer walk;
-	public SpriteRenderer jump;
-	public SpriteRenderer attack1;
+	public SpriteRenderer dead;
 
 	public bool defaultFacingLeft = false;
 
 	public State storedState = State.Undefined;
 
 	// Invincibility 1blinking
-	public Color invincibleTint1; 
-	public Color invincibleTint2;
+	public Color blinkTint1; 
+	public Color blinkTint2;
 	public int   blinkFrames = 30;
 
 	void Start() {
@@ -35,20 +31,20 @@ public class PlayerAnimator : MonoBehaviour {
 	}
 
 	void Update() {
-		if (player.IsInvincible()) {
-			int framesSinceInvincible = player.GetFramesSinceInvincible();
-			int numBlinksSince = (int) framesSinceInvincible / blinkFrames;
+		//# if (enemy.IsBlinking()) {
+		//# 	int framesSinceHit = player.GetFramesSinceHit();
+		//# 	int numBlinksSince = (int) framesSinceHit / blinkFrames;
 
-			if ( (numBlinksSince % 2) == 0) {
-				SetColor(invincibleTint1);
-			}
-			else {
-				SetColor(invincibleTint2);
-			}
-		}
-		else {
-			SetColor(Color.white);
-		}
+		//# 	if ( (numBlinksSince % 2) == 0) {
+		//# 		SetColor(blinkTint1);
+		//# 	}
+		//# 	else {
+		//# 		SetColor(blinkTint2);
+		//# 	}
+		//# }
+		//# else {
+		//# 	SetColor(Color.white);
+		//# }
 	}
 
 
@@ -58,17 +54,16 @@ public class PlayerAnimator : MonoBehaviour {
 	// Right now only used by attack1 animation.
 	// Not really sure what else this is supposed to do.
 	public void EndAnimation(State state) {
-		player.EndAttack();
-	}	
+		//# player.EndAttack();
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// COLOR MANAGEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void SetColor(Color color) {
-		if (idle    != null)    idle.color = color;
-		if (walk    != null)    walk.color = color;
-		if (jump    != null)    jump.color = color;
-		if (attack1 != null) attack1.color = color;
+		if (idle    != null) idle.color = color;
+		if (walk    != null) walk.color = color;
+		if (dead    != null) dead.color = color;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,9 +98,7 @@ public class PlayerAnimator : MonoBehaviour {
 			// First set everything to be disabled.
 			if (idle != null) idle.gameObject.SetActive(false);
 			if (walk != null) walk.gameObject.SetActive(false);
-			if (jump != null) jump.gameObject.SetActive(false);
-
-			if (attack1 != null) attack1.gameObject.SetActive(false);
+			if (dead != null) dead.gameObject.SetActive(false);
 
 			// Re-enable based on state
 			switch (state) {
@@ -117,24 +110,19 @@ public class PlayerAnimator : MonoBehaviour {
 					if (walk != null) walk.gameObject.SetActive(true);
 					break;
 
-				case State.Jump:
-					if (jump != null) jump.gameObject.SetActive(true);
-					break;
-
-				case State.Attack1:
-					if (attack1 != null) attack1.gameObject.SetActive(true);
+				case State.Dead:
+					if (dead != null) dead.gameObject.SetActive(true);
 					break;
 
 				default:
 					// Default to idle, but keep the state undefined, so we can properly switch
 					// into idle later.
 					state = State.Undefined;
-					if (idle != null) idle.gameObject.SetActive(true);
+					if (idle != null)idle.gameObject.SetActive(true);
 					break;
 			}
 
 			storedState = state;
 		}
 	}
-
 }

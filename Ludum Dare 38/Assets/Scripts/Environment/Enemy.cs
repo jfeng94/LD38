@@ -5,6 +5,8 @@ using UnityEngine;
 public class Enemy : Character {
 	public GameObject indicator;
 
+	public EnemyAnimator animator;
+
 	private Player aggroTarget = null;
 
 	// Where the enemy spawns at
@@ -102,6 +104,10 @@ public class Enemy : Character {
 			if (Mathf.Abs(displacement) < 0.2f) {
 				velocity.x = 0;
 				rb.velocity = velocity;
+
+				if (animator != null) {
+					animator.SetState(EnemyAnimator.State.Idle);
+				}
 				return;
 			}
 
@@ -110,6 +116,13 @@ public class Enemy : Character {
 			
 			if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement)) {
 				velocity.x = Mathf.Sign(displacement) * maxSpeed;
+			}
+
+			if (Mathf.Sign(displacement) > 0) if (animator != null) animator.TurnRight();
+			else                              if (animator != null) animator.TurnLeft();  
+
+			if (animator != null) {
+				animator.SetState(EnemyAnimator.State.Walk);
 			}
 
 			rb.velocity = velocity;

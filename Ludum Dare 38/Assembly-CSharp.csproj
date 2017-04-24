@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\Camera\WarpTarget.cs" />
      <Compile Include="Assets\Scripts\Camera\WarpTrigger.cs" />
      <Compile Include="Assets\Scripts\Enemy\BouncingEnemy.cs" />
+     <Compile Include="Assets\Scripts\Enemy\EnemyAnimator.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyHitbox.cs" />
      <Compile Include="Assets\Scripts\Enemy\FlappingEnemy.cs" />
      <Compile Include="Assets\Scripts\Environment\Enemy.cs" />

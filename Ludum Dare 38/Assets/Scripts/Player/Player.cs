@@ -44,7 +44,7 @@ public class Player : Character {
 
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS UP
-		//------------------------------------------------------------------------------------------
+		//------------------------------------------------------------sssssssssssssssssssssssssssssssssssss------------------------------
 		if (Input.GetKeyUp(KeyCode.LeftArrow))  movingLeft  = false;
 		if (Input.GetKeyUp(KeyCode.RightArrow)) movingRight = false;
 
