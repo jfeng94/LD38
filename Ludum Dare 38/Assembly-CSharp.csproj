@@ -61,8 +61,10 @@
      <Compile Include="Assets\Scripts\Enemy\FlappingEnemy.cs" />
      <Compile Include="Assets\Scripts\Environment\Enemy.cs" />
      <Compile Include="Assets\Scripts\Environment\Floor.cs" />
+     <Compile Include="Assets\Scripts\Environment\IInteractable.cs" />
      <Compile Include="Assets\Scripts\Environment\Interactable.cs" />
      <Compile Include="Assets\Scripts\Environment\NPC.cs" />
+     <Compile Include="Assets\Scripts\Environment\NPCAnimator.cs" />
      <Compile Include="Assets\Scripts\NeuralNet\MovementPrediction.cs" />
      <Compile Include="Assets\Scripts\NeuralNet\NeuralNet.cs" />
      <Compile Include="Assets\Scripts\NeuralNet\Neuron.cs" />

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPC : Interactable {
+public class NPC : Character, IInteractable {
 	public GameObject textBubble;
+	public GameObject indicator;
+	public bool canInteract = true;
 
-	public override void Start() {
+	protected override void Start() {
 		base.Start();
 
 		if (textBubble != null) {
@@ -13,7 +15,23 @@ public class NPC : Interactable {
 		}
 	}
 
-	public override void Interact() {
+	public bool CanInteract() {
+		return canInteract;
+	}
+
+	public void StartSignaling() {
+		if (indicator != null) {
+			indicator.SetActive(true);
+		}
+	}
+
+	public void StopSignaling() {
+		if (indicator != null) {
+			indicator.SetActive(false);
+		}
+	}
+
+	public void Interact() {
 		if (indicator != null) {
 			indicator.SetActive(false);
 		}

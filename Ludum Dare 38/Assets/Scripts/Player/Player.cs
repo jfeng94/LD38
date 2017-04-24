@@ -12,8 +12,8 @@ public class Player : Character {
 	private bool movingLeft  = false;
 	private bool movingRight = false;
 	private bool attacking   = false;
-	
-	private Interactable currentInteractable = null;
+
+	private IInteractable currentInteractable = null;
 
 	// List of all enemies that currently hold aggro on the player
 	private List<Enemy> enemiesWithAggro = new List<Enemy>();
@@ -232,16 +232,20 @@ public class Player : Character {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
+	 	IInteractable interactable = collider.gameObject.GetComponent<IInteractable>();
 	 	if (interactable != null) {
-	 		currentInteractable = interactable;
+	 		if (interactable.CanInteract()) {
+		 		currentInteractable = interactable;
+		 		currentInteractable.StartSignaling();
+	 		}
 	 	}
 	}
 
 	void OnTriggerExit2D(Collider2D collider)
 	{
-	 	Interactable interactable = collider.gameObject.GetComponent<Interactable>();
+	 	IInteractable interactable = collider.gameObject.GetComponent<IInteractable>();
 	 	if (interactable != null && interactable == currentInteractable) {
+	 		currentInteractable.StopSignaling();
 	 		currentInteractable = null;
 	 	}
 	}
