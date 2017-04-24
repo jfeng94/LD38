@@ -24,7 +24,9 @@ public class FlappingEnemy : Enemy {
 		base.Update();
 	}
 	protected override void MoveTowardsPosition(Vector3 position) {
-		
+		// To keep the enemy from running around on the ground, we'll  increase y by 0.5
+		position.y += 1f;
+
 		Vector3 displacement = position - transform.position;
 
 		Rigidbody2D rb = GetComponent<Rigidbody2D>();

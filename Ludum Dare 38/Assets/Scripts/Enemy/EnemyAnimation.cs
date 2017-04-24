@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyAnimation : MonoBehaviour {
+	public EnemyAnimator.State state;
+	public EnemyAnimator animator;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	// Called by animation
+	public void EndAnimationCallback() {
+		animator.EndAnimation(state);
 	}
 }

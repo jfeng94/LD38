@@ -12,25 +12,12 @@ public class Player : Character {
 	private bool movingLeft  = false;
 	private bool movingRight = false;
 	private bool attacking   = false;
-
-	// Invincible state variables
-	private bool invincible;
-	private int  invincibleStartFrame;
-	private int  invincibilityFrames = 60;
-
+	
 	private Interactable currentInteractable = null;
 
 	// List of all enemies that currently hold aggro on the player
 	private List<Enemy> enemiesWithAggro = new List<Enemy>();
 
-
-	private MovementPrediction movementPrediction = null;
-	protected override void Start() {
-		Debug.Log ("starting");
-		base.Start ();
-		movementPrediction = new MovementPrediction ();
-
-	}
 	// Update is called once per frame
 	protected override void Update () {
 		base.Update();
