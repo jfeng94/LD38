@@ -20,13 +20,21 @@ public class ResourceBar : MonoBehaviour {
 		});
 	}
 
-	public void SetValue(int value) {
+	public void SetValue(int value, float nextTickProgress = 0f) {
 		
 		for (int i = 0; i < value; i++) {
 			if (i < ticks.Count) {
 				ticks[i].gameObject.SetActive(true);
+				ticks[i].SetSpriteContainerScale(1f);
 			}
 		} 
+
+		if (nextTickProgress > 0.1f && value >= 0 && value < ticks.Count) {
+			ticks[value].gameObject.SetActive(true);
+			ticks[value].SetSpriteContainerScale(nextTickProgress);
+
+			value = value + 1;
+		}
 
 		for (int i = value; i < ticks.Count; i++) {
 			if (i >= 0) {

@@ -14,7 +14,7 @@ public class Player : Character {
 	//----------------------------------------------------------------------------------------------
 	// Jumping
 	//----------------------------------------------------------------------------------------------
-	private float jumpingVelocity = 20f;
+	public float jumpingVelocity = 20f;
 
 	//----------------------------------------------------------------------------------------------
 	// Animator and state flags state flags
@@ -25,6 +25,13 @@ public class Player : Character {
 	private bool movingRight = false;
 	private bool attacking   = false;
 	private bool facingLeft  = false;
+
+	//----------------------------------------------------------------------------------------------
+	// Passive idle regen
+	//----------------------------------------------------------------------------------------------
+	public int numFramesHealthRegen = 300;
+	public int numFramesManaRegen   = 600;
+	public int idleStartFrame       = int.MaxValue;
 
 	//----------------------------------------------------------------------------------------------
 	// Interaction
@@ -49,6 +56,8 @@ public class Player : Character {
 
 		CheckDashing();
 
+		CheckRegen();
+
 		// Go through all enemies with aggro. If we're sufficiently far enough away from it, 
 		// it should drop aggro.
 		CheckAggro();
@@ -59,13 +68,14 @@ public class Player : Character {
 		if (Input.GetKeyDown(KeyCode.LeftArrow))  { TurnLeft();  movingLeft  = true; }
 		if (Input.GetKeyDown(KeyCode.RightArrow)) { TurnRight(); movingRight = true; }
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
+		if (Input.GetKeyDown(KeyCode.A))          Attack();
 		if (Input.GetKeyDown(KeyCode.D))          Dash();
 
 
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS UP
 		//------------------------------------------------------------------------------------------
-		if (Input.GetKeyUp(KeyCode.LeftArrow)) movingLeft = false;
+		if (Input.GetKeyUp(KeyCode.LeftArrow))  movingLeft  = false;
 		if (Input.GetKeyUp(KeyCode.RightArrow)) movingRight = false;
 
 		//------------------------------------------------------------------------------------------
@@ -74,7 +84,6 @@ public class Player : Character {
 		if (Input.GetKey(KeyCode.Space))      Jump();
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
-		if (Input.GetKey(KeyCode.A))          Attack();
 
 		//------------------------------------------------------------------------------------------
 		// QUIT APPLICATION
@@ -91,10 +100,37 @@ public class Player : Character {
 	void LateUpdate() {
 		if (rb.velocity.x > 0) {
 			TurnRight();
-		}	
+		}
 		else if (rb.velocity.x < 0) {
 			TurnLeft();
 		}
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// PASSIVE REGEN
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	protected void CheckRegen() {
+		if ((Time.frameCount - idleStartFrame) > 0) {
+			if ( (Time.frameCount - idleStartFrame) % numFramesHealthRegen == 0) {
+				GainHealth(1);
+			}
+		}
+
+		if ((Time.frameCount - firstFrameCanRegenMana) > 0) {
+			if ( (Time.frameCount - firstFrameCanRegenMana) % numFramesManaRegen == 0) {
+				GainMana(1);
+			}	
+		}
+	}
+
+	public float GetManaRegenProgress() {
+		int frames = Time.frameCount - firstFrameCanRegenMana;
+		if ((frames) > 0) {
+			frames = ((frames % numFramesManaRegen) + numFramesManaRegen) % numFramesManaRegen;
+			return (float) frames / (float) numFramesManaRegen;
+		}
+		else return 0f;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,17 +148,12 @@ public class Player : Character {
 	//// ATTACKING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Attack() {
-		if (!attacking) {
-			animator.SetState(PlayerAnimator.State.Attack1);
-			attacking = true;
-
-			if (dashing) {
-				CancelDash();
-			}
-
-			animator.SetState(PlayerAnimator.State.Attack1);
-			attacking = true;
+		if (dashing) {
+			CancelDash();
 		}
+
+		animator.SetState(PlayerAnimator.State.Attack1);
+		attacking = true;
 	}
 
 	public void EndAttack() {
@@ -151,11 +182,12 @@ public class Player : Character {
 
 	public void Dash() {
 		if (!attacking) {
-			//# if (hasMana) {
+			if (hasMana) {
 				animator.SetState(PlayerAnimator.State.Dash);
 				dashing = true;
 				dashStartFrame = Time.frameCount;
-			//# }
+				ExpendMana(1);
+			}
 		}
 	}
 
@@ -264,20 +296,28 @@ public class Player : Character {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private void UpdateAnimationState() {
 		if (attacking) {
-			animator.SetState(PlayerAnimator.State.Attack1);			
+			animator.SetState(PlayerAnimator.State.Attack1);
+			idleStartFrame = int.MaxValue;			
 		}
 		else if (dashing) {
 			animator.SetState(PlayerAnimator.State.Dash);
+			idleStartFrame = int.MaxValue;
 		}
 		else if (!grounded) {
 			animator.SetState(PlayerAnimator.State.Jump);
+			idleStartFrame = int.MaxValue;
 		}
 		else if (movingLeft ^ movingRight) {
 			animator.SetState(PlayerAnimator.State.Walk);
+			idleStartFrame = int.MaxValue;
 		}
 		else {
 			animator.SetState(PlayerAnimator.State.Idle);
+			if (idleStartFrame == int.MaxValue) {
+				idleStartFrame = Time.frameCount;
+			}
 		}
+		//# Debug.Log("UpdateAnimationState -- idleStartFrame: " + idleStartFrame);
 	}
 
 	public void TurnLeft()  {

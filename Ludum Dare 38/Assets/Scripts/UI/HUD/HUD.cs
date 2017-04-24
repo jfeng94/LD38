@@ -20,7 +20,7 @@ public class HUD : MonoBehaviour {
 		int mana   = player.GetMana();
 
 		healthBar.SetValue(health);
-		manaBar.SetValue(mana);
+		manaBar.SetValue(mana, player.GetManaRegenProgress());
 
 		if (health <= 0) {
 			gameOverScreen.SetActive(true);

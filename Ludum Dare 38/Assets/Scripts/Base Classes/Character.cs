@@ -11,6 +11,8 @@ public class Character : MonoBehaviour, IHittable {
 
 	public int health = 5;
 	public int mana   = 3;
+	protected int firstFrameCanRegenMana = int.MaxValue;
+
 
 	//----------------------------------------------------------------------------------------------
 	// Invincible state variables
@@ -50,7 +52,7 @@ public class Character : MonoBehaviour, IHittable {
 
 	protected bool hasMana {
 		get {
-			return mana <= 0;
+			return mana > 0;
 		}
 	}
 
@@ -218,4 +220,36 @@ public class Character : MonoBehaviour, IHittable {
 	public int GetMaxMana() {
 		return maxMana;
 	}
+
+	public void ExpendMana(int amount) {
+		mana = mana - amount;
+		EnsureManaIsWithinBounds();
+
+		if (mana < maxMana) {
+			if (firstFrameCanRegenMana == int.MaxValue) {
+				firstFrameCanRegenMana = Time.frameCount;
+			}
+		}
+	}
+
+	public void GainMana(int amount) {
+		mana = mana + amount;
+		EnsureManaIsWithinBounds();
+
+		if (mana >= maxMana) {
+			firstFrameCanRegenMana = int.MaxValue;
+		}
+	}
+
+	private void EnsureManaIsWithinBounds() {
+		if (mana <= 0) {
+			mana = 0;
+		}
+
+		if (mana > maxMana) {
+			mana = maxMana;
+		}
+	}
+
+
 }
