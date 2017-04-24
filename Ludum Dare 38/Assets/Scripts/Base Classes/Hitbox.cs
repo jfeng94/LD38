@@ -14,6 +14,18 @@ public class Hitbox : MonoBehaviour {
 		localRotation = transform.localRotation;
 	}
 
+	void Update() {
+		// Keep the rigidbody from falling away from the player object
+		transform.localPosition = localPosition; 
+		transform.localRotation = localRotation;
+	}
+
+	void FixedUpdate() {
+		// Keep the rigidbody from falling away from the player object
+		transform.localPosition = localPosition; 
+		transform.localRotation = localRotation;
+	}
+
 	void LateUpdate() {
 		// Keep the rigidbody from falling away from the player object
 		transform.localPosition = localPosition; 

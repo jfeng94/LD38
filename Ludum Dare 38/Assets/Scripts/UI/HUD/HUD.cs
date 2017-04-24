@@ -6,11 +6,12 @@ public class HUD : MonoBehaviour {
 	public ResourceBar healthBar;
 	public ResourceBar manaBar;
 
+	public GameObject gameOverScreen;
+
 	public Player player;
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -20,5 +21,9 @@ public class HUD : MonoBehaviour {
 
 		healthBar.SetValue(health);
 		manaBar.SetValue(mana);
+
+		if (health <= 0) {
+			gameOverScreen.SetActive(true);
+		}
 	}
 }
