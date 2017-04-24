@@ -118,8 +118,12 @@ public class Enemy : Character {
 				velocity.x = Mathf.Sign(displacement) * maxSpeed;
 			}
 
-			if (Mathf.Sign(displacement) > 0) if (animator != null) animator.TurnRight();
-			else                              if (animator != null) animator.TurnLeft();  
+			if (Mathf.Sign(displacement) > 0) {
+				if (animator != null) animator.TurnRight();
+			}
+			else                              {
+				if (animator != null) animator.TurnLeft();  
+			}
 
 			if (animator != null) {
 				animator.SetState(EnemyAnimator.State.Walk);

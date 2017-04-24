@@ -17683,7 +17683,7 @@ MonoBehaviour:
   movementSpeed: 0.5
   aerialDrift: 0.1
   indicator: {fileID: 1053549375}
-  animator: {fileID: 0}
+  animator: {fileID: 1577906290}
   spawnPosition: {x: 0, y: 0, z: 0}
   leashLength: 5
   aggroRange: 10
