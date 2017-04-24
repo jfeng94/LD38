@@ -13,6 +13,11 @@ public class Player : Character {
 	private bool movingRight = false;
 	private bool attacking   = false;
 
+	// Invincible state variables
+	private bool invincible;
+	private int  invincibleStartFrame;
+	private int  invincibilityFrames = 60;
+
 	private Interactable currentInteractable = null;
 
 	// List of all enemies that currently hold aggro on the player
@@ -21,6 +26,8 @@ public class Player : Character {
 	// Update is called once per frame
 	protected override void Update () {
 		base.Update();
+
+		CheckInvincibility();
 
 		// Go through all enemies with aggro. If we're sufficiently far enough away from it, 
 		// it should drop aggro.
@@ -63,6 +70,36 @@ public class Player : Character {
 		return layerMask;
 	} 
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// INVINCIBILITY
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void StartInvincibility() {
+		invincible = true;
+		invincibleStartFrame = Time.frameCount;
+	}
+
+	public void EndInvincibility() {
+		invincible = false;
+		invincibleStartFrame = -1;
+	}
+
+	public void CheckInvincibility() {
+		if (invincible) {
+			if ( (Time.frameCount - invincibleStartFrame) > invincibilityFrames) {
+				invincible = false;
+			}
+		}
+	}
+
+	public bool IsInvincible() {
+		return invincible;
+	}
+
+	public int GetFramesSinceInvincible() {
+		return Time.frameCount - invincibleStartFrame;
+	}
+
+
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// ENEMY AGGRO
@@ -89,6 +126,22 @@ public class Player : Character {
 	public void AddEnemyAggro(Enemy enemy) {
 		if (!enemiesWithAggro.Contains(enemy)) {
 			enemiesWithAggro.Add(enemy);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// COMBAT AND DAMAGE
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public override void InflictDamage(int damage, Vector2 direction, float strength) {
+		if (! invincible) {
+			base.InflictDamage(damage, direction, strength);
+
+			StartInvincibility();
+
+			// TODO -- Check for game overs?
+			if (health <= 0) {
+				Debug.Log("Game Over!!!");
+			}
 		}
 	}
 
@@ -170,7 +223,7 @@ public class Player : Character {
 			animator.TurnRight();
 		}
 	}
-	public void Crouch()    {
+	public void Crouch() {
 	}
 
 	public void Attack() {

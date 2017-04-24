@@ -19,6 +19,8 @@ public class Enemy : Character {
 	protected override void Start () {
 		base.Start();
 		spawnPosition = transform.position;
+
+		Respawn();
 	}
 	
 	// Update is called once per frame
@@ -49,8 +51,45 @@ public class Enemy : Character {
 		}
 	}
 
+	protected void Respawn() {
+		//# animator.SetState(EnemyAnimator.State.Idle);
+
+		Collider2D collider = GetComponent<Collider2D>();
+		if (collider != null) {
+			collider.enabled = true;
+		}
+
+		Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+		for (int i = 0; i < colliders.Length; i++) {
+			colliders[i].enabled = true;
+		}
+		
+
+		if (rb != null) {
+			rb.simulated = true;
+		}
+
+		transform.position = spawnPosition;
+		transform.rotation = Quaternion.identity;
+	}
+
 	protected override void DieAHorribleDeath() {
 		animator.SetState(EnemyAnimator.State.Dead);
+
+		Collider2D collider = GetComponent<Collider2D>();
+		if (collider != null) {
+			collider.enabled = false;
+		}
+
+
+		if (rb != null) {
+			rb.simulated = false;
+		}
+
+		Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+		for (int i = 0; i < colliders.Length; i++) {
+			colliders[i].enabled = false;
+		}
 
 		rb.velocity = Vector3.zero;
 		rb.angularVelocity = 0;

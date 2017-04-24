@@ -54,7 +54,14 @@ public class EnemyAnimator : MonoBehaviour {
 	// Right now only used by attack1 animation.
 	// Not really sure what else this is supposed to do.
 	public void EndAnimation(State state) {
-		//# player.EndAttack();
+		switch (state) {
+			case State.Dead:
+				enemy.gameObject.SetActive(false);
+				break;
+
+			default:
+				break;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
