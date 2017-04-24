@@ -22,8 +22,8 @@ public class EnemyAnimator : MonoBehaviour {
 	public State storedState = State.Undefined;
 
 	// Invincibility 1blinking
-	public Color blinkTint1; 
-	public Color blinkTint2;
+	public Color invincibleTint1; 
+	public Color invincibleTint2;
 	public int   blinkFrames = 30;
 
 	void Start() {
@@ -31,20 +31,20 @@ public class EnemyAnimator : MonoBehaviour {
 	}
 
 	void Update() {
-		//# if (enemy.IsBlinking()) {
-		//# 	int framesSinceHit = player.GetFramesSinceHit();
-		//# 	int numBlinksSince = (int) framesSinceHit / blinkFrames;
+		if (enemy.IsInvincible()) {
+			int framesSinceInvincible = enemy.GetFramesSinceInvincible();
+			int numBlinksSince = (int) framesSinceInvincible / blinkFrames;
 
-		//# 	if ( (numBlinksSince % 2) == 0) {
-		//# 		SetColor(blinkTint1);
-		//# 	}
-		//# 	else {
-		//# 		SetColor(blinkTint2);
-		//# 	}
-		//# }
-		//# else {
-		//# 	SetColor(Color.white);
-		//# }
+			if ( (numBlinksSince % 2) == 0) {
+				SetColor(invincibleTint1);
+			}
+			else {
+				SetColor(invincibleTint2);
+			}
+		}
+		else {
+			SetColor(Color.white);
+		}
 	}
 
 

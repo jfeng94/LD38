@@ -13,6 +13,13 @@ public class Character : MonoBehaviour, IHittable {
 	public int mana   = 3;
 
 	//----------------------------------------------------------------------------------------------
+	// Invincible state variables
+	//----------------------------------------------------------------------------------------------
+	protected bool invincible;
+	protected int  invincibleStartFrame;
+	protected int  invincibilityFrames = 60;
+
+	//----------------------------------------------------------------------------------------------
 	// Groundedness
 	//----------------------------------------------------------------------------------------------
 	// Whether the character is touching the ground
@@ -43,9 +50,38 @@ public class Character : MonoBehaviour, IHittable {
 	}
 	
 	protected virtual void Update() {
+		CheckInvincibility();
 		CheckGrounded();
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// INVINCIBILITY
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void StartInvincibility() {
+		invincible = true;
+		invincibleStartFrame = Time.frameCount;
+	}
+
+	public void EndInvincibility() {
+		invincible = false;
+		invincibleStartFrame = -1;
+	}
+
+	public void CheckInvincibility() {
+		if (invincible) {
+			if ( (Time.frameCount - invincibleStartFrame) > invincibilityFrames) {
+				invincible = false;
+			}
+		}
+	}
+
+	public bool IsInvincible() {
+		return invincible;
+	}
+
+	public int GetFramesSinceInvincible() {
+		return Time.frameCount - invincibleStartFrame;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// GROUNDEDNESS
@@ -137,18 +173,29 @@ public class Character : MonoBehaviour, IHittable {
 		GainHealth(heal);
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// COMBAT AND DAMAGE
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	public virtual void InflictDamage(int damage, Vector2 direction, float strength) {
-		DealDamage(damage);
+		if (! invincible) {
+			DealDamage(damage);
 
-		if (rb != null) {
-			Debug.Log("InflictDamage imparted force in " + direction + " direction with " + strength + " strength");
-			rb.AddForce(direction * strength, ForceMode2D.Impulse);
-		}
-		else {
-			Debug.Log("InflictDamage Rigidbody2D is null?");
+			if (rb != null) {
+				Debug.Log("InflictDamage imparted force in " + direction + " direction with " + strength + " strength");
+				rb.AddForce(direction * strength, ForceMode2D.Impulse);
+			}
+			else {
+				Debug.Log("InflictDamage Rigidbody2D is null?");
+			}
+
+			StartInvincibility();
+
+			// TODO -- Check for game overs?
+			if (health <= 0) {
+				Debug.Log("Game Over!!!");
+			}
 		}
 	}
-
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// MANA
