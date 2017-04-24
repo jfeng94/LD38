@@ -46,19 +46,19 @@ public class NPCAnimator : MonoBehaviour {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void TurnLeft() {
 		if (defaultFacingLeft) {
-			transform.localScale = new Vector3(-1, 1, 1);
+			transform.localScale = new Vector3(1, 1, 1);
 		}
 		else {
-			transform.localScale = new Vector3(1, 1, 1);
+			transform.localScale = new Vector3(-1, 1, 1);
 		}
 	}
 
 	public void TurnRight() {
 		if (defaultFacingLeft) {
-			transform.localScale = new Vector3(1, 1, 1);
+			transform.localScale = new Vector3(-1, 1, 1);
 		}
 		else {
-			transform.localScale = new Vector3(-1, 1, 1);
+			transform.localScale = new Vector3(1, 1, 1);
 		}
 	}
 

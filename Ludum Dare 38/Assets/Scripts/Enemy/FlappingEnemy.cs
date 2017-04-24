@@ -40,8 +40,6 @@ public class FlappingEnemy : Enemy {
 			if (Mathf.Abs(displacement.x) < 0.2f) {
 				velocity.x = 0;
 			} else {
-				Debug.Log ("trying to move");
-
 				velocity.x += Mathf.Sign(displacement.x) * movementSpeed;
 
 				if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement.x)) {
@@ -61,7 +59,6 @@ public class FlappingEnemy : Enemy {
 			// If below target, flap.
 			if (displacement.y > 1) {
 				if (CanFlap ()) {
-					Debug.Log ("flap");
 					//velocity.y = flapStrength;
 					rb.AddForce(new Vector2(0, flapStrength));
 				}

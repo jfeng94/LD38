@@ -66,37 +66,6 @@ public class Player : Character {
 	} 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	//// INVINCIBILITY
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	public void StartInvincibility() {
-		invincible = true;
-		invincibleStartFrame = Time.frameCount;
-	}
-
-	public void EndInvincibility() {
-		invincible = false;
-		invincibleStartFrame = -1;
-	}
-
-	public void CheckInvincibility() {
-		if (invincible) {
-			if ( (Time.frameCount - invincibleStartFrame) > invincibilityFrames) {
-				invincible = false;
-			}
-		}
-	}
-
-	public bool IsInvincible() {
-		return invincible;
-	}
-
-	public int GetFramesSinceInvincible() {
-		return Time.frameCount - invincibleStartFrame;
-	}
-
-
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// ENEMY AGGRO
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private void CheckAggro() {

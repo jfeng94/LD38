@@ -16,7 +16,6 @@ public class BouncingEnemy : Enemy {
 			if (Mathf.Abs(displacement.x) < 0.2f) {
 				velocity.x = 0;
 			} else {
-				Debug.Log ("trying to move");
 				velocity.x += Mathf.Sign(displacement.x) * movementSpeed;
 
 				if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement.x)) {
@@ -25,7 +24,6 @@ public class BouncingEnemy : Enemy {
 			}
 
 			if (grounded) {
-				Debug.Log ("jumping");
 				velocity.y = jumpingVelocity;
 			} 
 			rb.velocity = velocity;

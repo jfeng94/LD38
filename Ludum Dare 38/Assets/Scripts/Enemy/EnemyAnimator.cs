@@ -77,7 +77,6 @@ public class EnemyAnimator : MonoBehaviour {
 	//// FACING MANAGEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void TurnLeft() {
-		Debug.Log("TurnLeft");
 		if (defaultFacingLeft) {
 			transform.localScale = new Vector3(1, 1, 1);
 		}
@@ -87,7 +86,6 @@ public class EnemyAnimator : MonoBehaviour {
 	}
 
 	public void TurnRight() {
-		Debug.Log("TurnRight");
 		if (defaultFacingLeft) {
 			transform.localScale = new Vector3(-1, 1, 1);
 		}
