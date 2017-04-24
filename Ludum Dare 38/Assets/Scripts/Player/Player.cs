@@ -7,9 +7,10 @@ public class Player : Character {
 	//----------------------------------------------------------------------------------------------
 	// Dashing
 	//----------------------------------------------------------------------------------------------
-	public  float dashingVelocity  = 20f;
-	public  int   numFramesDashing = 30;
-	private int   dashStartFrame   = int.MinValue;
+	public  float horizontalDashingVelocity = 20f;
+	public  float verticalDashingVelocity   = 40f;
+	public  int   numFramesDashing          = 30;
+	private int   dashStartFrame            = int.MinValue;
 
 	//----------------------------------------------------------------------------------------------
 	// Jumping
@@ -20,12 +21,13 @@ public class Player : Character {
 	// Animator and state flags state flags
 	//----------------------------------------------------------------------------------------------
 	public PlayerAnimator animator;
-	private bool dashing         = false;
-	private bool movingLeft      = false;
-	private bool movingRight     = false;
-	private bool groundAttacking = false;
-	private bool aerialAttacking = false;
-	private bool facingLeft      = false;
+	private bool hDashing    = false;
+	private bool vDashing    = false;
+	private bool movingLeft  = false;
+	private bool movingRight = false;
+	private bool gAttacking  = false;
+	private bool aAttacking  = false;
+	private bool facingLeft  = false;
 
 	//----------------------------------------------------------------------------------------------
 	// Passive idle regen
@@ -45,6 +47,17 @@ public class Player : Character {
 	// List of all enemies that currently hold aggro on the player
 	private List<Enemy> enemiesWithAggro = new List<Enemy>();
 
+	public bool isAttacking {
+		get {
+			return (gAttacking || aAttacking);
+		}
+	}
+
+	public bool isDashing {
+		get {
+			return (hDashing || vDashing);
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// MONOBEHAVIOUR METHODS
@@ -71,6 +84,7 @@ public class Player : Character {
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
 		if (Input.GetKeyDown(KeyCode.A))          Attack();
 		if (Input.GetKeyDown(KeyCode.D))          Dash();
+		if (Input.GetKeyDown(KeyCode.E))          DashUp();
 
 
 		//------------------------------------------------------------------------------------------
@@ -149,25 +163,25 @@ public class Player : Character {
 	//// ATTACKING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Attack() {
-		if (!groundAttacking && !aerialAttacking) {
-			if (dashing) {
+		if (!isAttacking) {
+			if (isDashing) {
 				CancelDash();
 			}
 
 			if (grounded) {	
 				animator.SetState(PlayerAnimator.State.GroundAttack);
-				groundAttacking = true;
+				gAttacking = true;
 			}
 			else {
 				animator.SetState(PlayerAnimator.State.AerialAttack);
-				aerialAttacking = true;
+				aAttacking = true;
 			}
 		}
 	}
 
 	public void EndAttack() {
-		groundAttacking = false;
-		aerialAttacking = false;
+		gAttacking = false;
+		aAttacking = false;
 		UpdateAnimationState();
 	}
 
@@ -175,36 +189,66 @@ public class Player : Character {
 	//// DASHING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	protected void CheckDashing() {
-		if (groundAttacking || aerialAttacking ||
+		if (isAttacking ||
 			(Time.frameCount - dashStartFrame > 0 && Time.frameCount - dashStartFrame > numFramesDashing) ) {
 			CancelDash();
 		}
 
-		if (dashing) {
+		if (hDashing) {
 			Vector3 velocity = rb.velocity;
 
-			velocity.x = dashingVelocity;
+			velocity.x = horizontalDashingVelocity;
 			if (facingLeft) velocity.x = -1f * velocity.x;
+
+			rb.velocity = velocity;
+		}
+
+		if (vDashing) {
+			Vector3 velocity = rb.velocity;
+
+			velocity.y = verticalDashingVelocity;
 
 			rb.velocity = velocity;
 		}
 	}
 
 	public void Dash() {
-		if (!groundAttacking || !aerialAttacking) {
+		if ( ! isAttacking) {
+			if (isDashing) {
+				CancelDash();
+			}
+
 			if (hasMana) {
 				animator.SetState(PlayerAnimator.State.Dash);
-				dashing = true;
+				hDashing = true;
 				dashStartFrame = Time.frameCount;
 				ExpendMana(1);
 			}
 		}
 	}
 
+	public void DashUp() {
+		if ( ! isAttacking) {
+			if (isDashing) {
+				CancelDash();
+			}
+
+			if (hasMana) {
+				animator.SetState(PlayerAnimator.State.DashUp);
+				vDashing = true;
+				dashStartFrame = Time.frameCount;
+				ExpendMana(1);
+			}
+
+		}
+	}
+
 	public void CancelDash() {
-		dashing = false;
+		hDashing = false;
+		vDashing = false;
 		Vector3 velocity = rb.velocity;
 		velocity.x = 0f;
+		velocity.y = 0f;
 		//# if (facingLeft) velocity.x = -1f * velocity.x;
 	}
 
@@ -268,8 +312,8 @@ public class Player : Character {
 	//// MOVEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Jump() {
-		// Only allow jumping if we're grounded and not groundAttacking
-		if (grounded && !groundAttacking) {
+		// Only allow jumping if we're grounded and not gAttacking
+		if (grounded && !gAttacking) {
 			Vector2 initialVelocity = rb.velocity;
 			initialVelocity.y = jumpingVelocity;
 			rb.velocity = initialVelocity;	
@@ -286,7 +330,7 @@ public class Player : Character {
 	private void Move(bool left) {
 		// Note that when the user dashes or attacks, they lock themselves into that animation.
 		// As a result, we block any 
-		if (!dashing && !groundAttacking) {
+		if (!isDashing && !gAttacking) {
 			float sign = 1f;
 			if (left) sign = -1f;
 
@@ -305,16 +349,20 @@ public class Player : Character {
 	//// SPRITE ANIMATION
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private void UpdateAnimationState() {
-		if (groundAttacking) {
+		if (gAttacking) {
 			animator.SetState(PlayerAnimator.State.GroundAttack);
 			idleStartFrame = int.MaxValue;			
 		}
-		else if (aerialAttacking) {
+		else if (aAttacking) {
 			animator.SetState(PlayerAnimator.State.AerialAttack);
 			idleStartFrame = int.MaxValue;		
 		}
-		else if (dashing) {
+		else if (hDashing) {
 			animator.SetState(PlayerAnimator.State.Dash);
+			idleStartFrame = int.MaxValue;
+		}
+		else if (vDashing) {
+			animator.SetState(PlayerAnimator.State.DashUp);
 			idleStartFrame = int.MaxValue;
 		}
 		else if (!grounded) {
@@ -335,14 +383,14 @@ public class Player : Character {
 	}
 
 	public void TurnLeft()  {
-		if (!groundAttacking && !aerialAttacking && !dashing) {
+		if ( ! isAttacking && !hDashing) {
 			animator.TurnLeft();
 			facingLeft = true;
 		}
 	}
 
 	public void TurnRight() {
-		if (!groundAttacking && !aerialAttacking && !dashing) {
+		if ( ! isAttacking && !hDashing) {
 			animator.TurnRight();
 			facingLeft = false;
 		}
