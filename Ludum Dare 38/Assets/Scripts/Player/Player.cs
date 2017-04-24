@@ -7,15 +7,19 @@ public class Player : Character {
 	//----------------------------------------------------------------------------------------------
 	// Dashing
 	//----------------------------------------------------------------------------------------------
-	public  float horizontalDashingVelocity = 20f;
-	public  float verticalDashingVelocity   = 40f;
+	public  float horizontalDashingVelocity = 30f;
+	public  float verticalDashingVelocity   = 50f;
 	public  int   numFramesDashing          = 30;
 	private int   dashStartFrame            = int.MinValue;
-
+	private int 	gAttackStartFrame 				= int.MinValue;
+	private int 	aAttackStartFrame 				= int.MinValue;
+	private int 	jumpCounter 							= 0;
+	private bool 	justJumped 								= false;
+	private bool 	stopJump 									= false;
 	//----------------------------------------------------------------------------------------------
 	// Jumping
 	//----------------------------------------------------------------------------------------------
-	public float jumpingVelocity = 20f;
+	public float jumpingVelocity = 5f;
 
 	//----------------------------------------------------------------------------------------------
 	// Animator and state flags state flags
@@ -76,6 +80,8 @@ public class Player : Character {
 		// it should drop aggro.
 		CheckAggro();
 
+		// Reset Long Jump amount.
+		CheckGround();
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS DOWN
 		//------------------------------------------------------------------------------------------
@@ -85,6 +91,7 @@ public class Player : Character {
 		if (Input.GetKeyDown(KeyCode.A))          Attack();
 		if (Input.GetKeyDown(KeyCode.D))          Dash();
 		if (Input.GetKeyDown(KeyCode.E))          DashUp();
+		if (Input.GetKeyDown(KeyCode.Space))      Jump();
 
 
 		//------------------------------------------------------------------------------------------
@@ -92,11 +99,13 @@ public class Player : Character {
 		//------------------------------------------------------------------------------------------
 		if (Input.GetKeyUp(KeyCode.LeftArrow))  movingLeft  = false;
 		if (Input.GetKeyUp(KeyCode.RightArrow)) movingRight = false;
+		if (Input.GetKeyUp(KeyCode.Space))      stopJump = true;
 
 		//------------------------------------------------------------------------------------------
 		// WHILE HOLDING KEY DOWN
 		//------------------------------------------------------------------------------------------
-		if (Input.GetKey(KeyCode.Space))      Jump();
+		if (Input.GetKey(KeyCode.Space) &&
+				!justJumped && !stopJump)      		LongerJump();
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
 
@@ -113,12 +122,18 @@ public class Player : Character {
 	}
 
 	void LateUpdate() {
-		if (rb.velocity.x > 0) {
-			TurnRight();
+		if (movingLeft && !movingRight) TurnLeft();
+		else if (movingRight && !movingLeft) TurnRight();
+		else if (movingRight && movingLeft) {
+			if (rb.velocity.x > 0) {
+				TurnRight();
+			}
+			else if (rb.velocity.x < 0) {
+				TurnLeft();
+			}
 		}
-		else if (rb.velocity.x < 0) {
-			TurnLeft();
-		}
+
+		justJumped = false;
 	}
 
 
@@ -153,8 +168,7 @@ public class Player : Character {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	protected override int GetGroundedLayerMask() {
 		LayerMask groundLayer = LayerMask.NameToLayer("Ground");
-		LayerMask enemyLayer  = LayerMask.NameToLayer("Enemy");
-		int layerMask = (1 << groundLayer.value) | (1 << enemyLayer.value);
+		int layerMask = (1 << groundLayer.value);
 		return layerMask;
 	}
 
@@ -171,10 +185,12 @@ public class Player : Character {
 			if (grounded) {	
 				animator.SetState(PlayerAnimator.State.GroundAttack);
 				gAttacking = true;
+				gAttackStartFrame = Time.frameCount;
 			}
 			else {
 				animator.SetState(PlayerAnimator.State.AerialAttack);
 				aAttacking = true;
+				aAttackStartFrame = Time.frameCount;
 			}
 		}
 	}
@@ -199,47 +215,64 @@ public class Player : Character {
 
 			velocity.x = horizontalDashingVelocity;
 			if (facingLeft) velocity.x = -1f * velocity.x;
-
+			// We don't want to move vertically when we're horizontally dashing.
+			velocity.y = 0f;
 			rb.velocity = velocity;
 		}
 
-		if (vDashing) {
+		else if (vDashing) {
 			Vector3 velocity = rb.velocity;
 
 			velocity.y = verticalDashingVelocity;
-
+			// We don't want to move horizontally when we're vertically dashing
+			velocity.x = 0f;
 			rb.velocity = velocity;
 		}
+		else rb.gravityScale = 0.8f;
 	}
 
 	public void Dash() {
-		if ( ! isAttacking) {
+		if (!hDashing) {
 			if (isDashing) {
 				CancelDash();
 			}
 
 			if (hasMana) {
-				animator.SetState(PlayerAnimator.State.Dash);
-				hDashing = true;
-				dashStartFrame = Time.frameCount;
-				ExpendMana(1);
+				if (!isAttacking || 
+						(isAttacking && (Time.frameCount - gAttackStartFrame > 10 || Time.frameCount - aAttackStartFrame > 3))) {
+
+					// If you want to dash right after you attack
+					if (facingLeft) animator.TurnLeft();
+					else animator.TurnRight();
+
+					gAttacking = false;
+					aAttacking = false;
+					animator.SetState(PlayerAnimator.State.Dash);
+					hDashing = true;
+					dashStartFrame = Time.frameCount;
+					rb.gravityScale = 0;
+					ExpendMana(1);
+				}
 			}
 		}
 	}
 
 	public void DashUp() {
-		if ( ! isAttacking) {
-			if (isDashing) {
-				CancelDash();
-			}
+		if (!vDashing) {
+			if (!isAttacking) {
+				if (isDashing) {
+					CancelDash();
+				}
 
-			if (hasMana) {
-				animator.SetState(PlayerAnimator.State.DashUp);
-				vDashing = true;
-				dashStartFrame = Time.frameCount;
-				ExpendMana(1);
+				if (hasMana) {
+					animator.SetState(PlayerAnimator.State.DashUp);
+					grounded = false;
+					stopJump = true;
+					vDashing = true;
+					dashStartFrame = Time.frameCount;
+					ExpendMana(1);
+				}
 			}
-
 		}
 	}
 
@@ -311,15 +344,34 @@ public class Player : Character {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// MOVEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void CheckGround() {
+		if (grounded) {
+			jumpCounter = 0;
+			aAttacking = false;
+			stopJump = false;
+		}
+	}
+
 	public void Jump() {
 		// Only allow jumping if we're grounded and not gAttacking
-		if (grounded && !gAttacking) {
+		if (grounded && !gAttacking && !isDashing) {
 			Vector2 initialVelocity = rb.velocity;
 			initialVelocity.y = jumpingVelocity;
 			rb.velocity = initialVelocity;	
 			// TODO: Start animating jump cycle
 
 			grounded = false;
+			justJumped = true;
+		}
+	}
+
+	public void LongerJump() {
+		jumpCounter++;
+		if (jumpCounter % 3 == 0 && jumpCounter < 15) {
+			Vector2 continuingVelocity = rb.velocity;
+			continuingVelocity.y = continuingVelocity.y + 4f;
+
+			rb.velocity = continuingVelocity;
 		}
 	}
 
@@ -383,16 +435,16 @@ public class Player : Character {
 	}
 
 	public void TurnLeft()  {
+		facingLeft = true;
 		if ( ! isAttacking && !hDashing) {
 			animator.TurnLeft();
-			facingLeft = true;
 		}
 	}
 
 	public void TurnRight() {
+		facingLeft = false;
 		if ( ! isAttacking && !hDashing) {
 			animator.TurnRight();
-			facingLeft = false;
 		}
 	}
 
