@@ -4,25 +4,50 @@ using UnityEngine;
 
 // Serves as a public interface for all the various components that make up a player.
 public class Player : Character {
-	public PlayerAnimator animator;
+	//----------------------------------------------------------------------------------------------
+	// Dashing
+	//----------------------------------------------------------------------------------------------
+	public  float dashingVelocity  = 20f;
+	public  int   numFramesDashing = 30;
+	private int   dashStartFrame   = int.MinValue;
 
+	//----------------------------------------------------------------------------------------------
+	// Jumping
+	//----------------------------------------------------------------------------------------------
 	private float jumpingVelocity = 20f;
 
-	// Movement state flags
+	//----------------------------------------------------------------------------------------------
+	// Animator and state flags state flags
+	//----------------------------------------------------------------------------------------------
+	public PlayerAnimator animator;
+	private bool dashing     = false;
 	private bool movingLeft  = false;
 	private bool movingRight = false;
 	private bool attacking   = false;
+	private bool facingLeft  = false;
 
+	//----------------------------------------------------------------------------------------------
+	// Interaction
+	//----------------------------------------------------------------------------------------------
 	private IInteractable currentInteractable = null;
 
+	//----------------------------------------------------------------------------------------------
+	// Aggro
+	//----------------------------------------------------------------------------------------------
 	// List of all enemies that currently hold aggro on the player
 	private List<Enemy> enemiesWithAggro = new List<Enemy>();
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// MONOBEHAVIOUR METHODS
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	// Update is called once per frame
 	protected override void Update () {
 		base.Update();
 
 		CheckInvincibility();
+
+		CheckDashing();
 
 		// Go through all enemies with aggro. If we're sufficiently far enough away from it, 
 		// it should drop aggro.
@@ -35,11 +60,12 @@ public class Player : Character {
 		if (Input.GetKeyDown(KeyCode.RightArrow)) { TurnRight(); movingRight = true; }
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
 		if (Input.GetKeyDown(KeyCode.A))          Attack();
+		if (Input.GetKeyDown(KeyCode.D))          Dash();
 
 
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS UP
-		//------------------------------------------------------------sssssssssssssssssssssssssssssssssssss------------------------------
+		//------------------------------------------------------------------------------------------
 		if (Input.GetKeyUp(KeyCode.LeftArrow))  movingLeft  = false;
 		if (Input.GetKeyUp(KeyCode.RightArrow)) movingRight = false;
 
@@ -63,7 +89,46 @@ public class Player : Character {
 		LayerMask enemyLayer  = LayerMask.NameToLayer("Enemy");
 		int layerMask = (1 << groundLayer.value) | (1 << enemyLayer.value);
 		return layerMask;
-	} 
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// ATTACKING
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public void Attack() {
+		animator.SetState(PlayerAnimator.State.Attack1);
+		attacking = true;
+	}
+
+	public void EndAttack() {
+		attacking = false;
+		UpdateAnimationState();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// DASHING
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	protected void CheckDashing() {
+		dashing = (Time.frameCount - dashStartFrame < numFramesDashing);
+
+		if (dashing) {
+			Vector3 velocity = rb.velocity;
+
+			velocity.x = dashingVelocity;
+			if (facingLeft) velocity.x = -1f * velocity.x;
+
+			rb.velocity = velocity;
+		}
+	}
+
+	public void Dash() {
+		if (!attacking) {
+			animator.SetState(PlayerAnimator.State.Dash);
+			dashing = true;
+			dashStartFrame = Time.frameCount;
+		}
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// ENEMY AGGRO
@@ -135,25 +200,23 @@ public class Player : Character {
 		}
 	}
 
-	public void MoveLeft() {
-		if (!attacking) {
-			Vector3 velocity = rb.velocity;
-			if (grounded) velocity.x += -1f * movementSpeed;
-			else          velocity.x += -1f * aerialDrift;
-			
-			if (velocity.x < -1f * maxSpeed) velocity.x = -1f * maxSpeed;
+	public void MoveLeft()  { Move(true);  }
+	public void MoveRight() { Move(false); }
 
-			rb.velocity = velocity;
-		}
-	}
+	// The actual logic behind movement, to reduce code duplication as we iterate with movement.
+	private void Move(bool left) {
+		// Note that when the user dashes or attacks, they lock themselves into that animation.
+		// As a result, we block any 
+		if (!dashing && !attacking) {
+			float sign = 1f;
+			if (left) sign = -1f;
 
-	public void MoveRight() {
-		if (!attacking) {
 			Vector3 velocity = rb.velocity;
-			if (grounded) velocity.x += movementSpeed;
-			else          velocity.x += aerialDrift;
-			
-			if (velocity.x > maxSpeed) velocity.x = maxSpeed;
+
+			if (grounded) velocity.x += sign * movementSpeed;
+			else          velocity.x += sign * aerialDrift;				
+
+			if (Mathf.Abs(velocity.x) > maxSpeed) velocity.x = sign * maxSpeed;
 
 			rb.velocity = velocity;
 		}
@@ -165,6 +228,9 @@ public class Player : Character {
 	private void UpdateAnimationState() {
 		if (attacking) {
 			animator.SetState(PlayerAnimator.State.Attack1);			
+		}
+		else if (dashing) {
+			animator.SetState(PlayerAnimator.State.Dash);
 		}
 		else if (!grounded) {
 			animator.SetState(PlayerAnimator.State.Jump);
@@ -178,26 +244,17 @@ public class Player : Character {
 	}
 
 	public void TurnLeft()  {
-		if (!attacking) {
+		if (!attacking && !dashing) {
 			animator.TurnLeft();
+			facingLeft = true;
 		}
 	}
+
 	public void TurnRight() {
-		if (!attacking) {
+		if (!attacking && !dashing) {
 			animator.TurnRight();
+			facingLeft = false;
 		}
-	}
-	public void Crouch() {
-	}
-
-	public void Attack() {
-		animator.SetState(PlayerAnimator.State.Attack1);
-		attacking = true;
-	}
-
-	public void EndAttack() {
-		attacking = false;
-		UpdateAnimationState();
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {

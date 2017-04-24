@@ -13,12 +13,16 @@ public class PlayerAnimator : MonoBehaviour {
 		Idle,
 		Walk,
 		Jump,
+		Dash,
+		DashUp,
 		Attack1,
 	}
 
 	public SpriteRenderer idle;
 	public SpriteRenderer walk;
 	public SpriteRenderer jump;
+	public SpriteRenderer dash;
+	public SpriteRenderer dashUp;
 	public SpriteRenderer attack1;
 
 	public bool defaultFacingLeft = false;
@@ -68,6 +72,8 @@ public class PlayerAnimator : MonoBehaviour {
 		if (idle    != null)    idle.color = color;
 		if (walk    != null)    walk.color = color;
 		if (jump    != null)    jump.color = color;
+		if (dash    != null)    dash.color = color;
+		if (dashUp  != null)  dashUp.color = color;
 		if (attack1 != null) attack1.color = color;
 	}
 
@@ -101,10 +107,11 @@ public class PlayerAnimator : MonoBehaviour {
 		// animation to restart.
 		if (state != storedState) {
 			// First set everything to be disabled.
-			if (idle != null) idle.gameObject.SetActive(false);
-			if (walk != null) walk.gameObject.SetActive(false);
-			if (jump != null) jump.gameObject.SetActive(false);
-
+			if (idle    != null)    idle.gameObject.SetActive(false);
+			if (walk    != null)    walk.gameObject.SetActive(false);
+			if (jump    != null)    jump.gameObject.SetActive(false);
+			if (dash    != null)    dash.gameObject.SetActive(false);
+			if (dashUp  != null)  dashUp.gameObject.SetActive(false);
 			if (attack1 != null) attack1.gameObject.SetActive(false);
 
 			// Re-enable based on state
@@ -119,6 +126,14 @@ public class PlayerAnimator : MonoBehaviour {
 
 				case State.Jump:
 					if (jump != null) jump.gameObject.SetActive(true);
+					break;
+
+				case State.Dash:
+					if (dash != null) dash.gameObject.SetActive(true);
+					break;
+
+				case State.DashUp:
+					if (dashUp != null) dashUp.gameObject.SetActive(true);
 					break;
 
 				case State.Attack1:
