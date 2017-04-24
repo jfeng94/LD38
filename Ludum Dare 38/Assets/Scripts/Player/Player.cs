@@ -59,14 +59,13 @@ public class Player : Character {
 		if (Input.GetKeyDown(KeyCode.LeftArrow))  { TurnLeft();  movingLeft  = true; }
 		if (Input.GetKeyDown(KeyCode.RightArrow)) { TurnRight(); movingRight = true; }
 		if (Input.GetKeyDown(KeyCode.F))          Interact();
-		if (Input.GetKeyDown(KeyCode.A))          Attack();
 		if (Input.GetKeyDown(KeyCode.D))          Dash();
 
 
 		//------------------------------------------------------------------------------------------
 		// ON KEY PRESS UP
 		//------------------------------------------------------------------------------------------
-		if (Input.GetKeyUp(KeyCode.LeftArrow))  movingLeft  = false;
+		if (Input.GetKeyUp(KeyCode.LeftArrow)) movingLeft = false;
 		if (Input.GetKeyUp(KeyCode.RightArrow)) movingRight = false;
 
 		//------------------------------------------------------------------------------------------
@@ -75,6 +74,7 @@ public class Player : Character {
 		if (Input.GetKey(KeyCode.Space))      Jump();
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
+		if (Input.GetKey(KeyCode.A))          Attack();
 
 		//------------------------------------------------------------------------------------------
 		// QUIT APPLICATION
@@ -88,6 +88,14 @@ public class Player : Character {
 
 	}
 
+	void LateUpdate() {
+		if (rb.velocity.x > 0) {
+			TurnRight();
+		}	
+		else if (rb.velocity.x < 0) {
+			TurnLeft();
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// GROUNDEDNESS
@@ -104,12 +112,17 @@ public class Player : Character {
 	//// ATTACKING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Attack() {
-		if (dashing) {
-			CancelDash();
-		}
+		if (!attacking) {
+			animator.SetState(PlayerAnimator.State.Attack1);
+			attacking = true;
 
-		animator.SetState(PlayerAnimator.State.Attack1);
-		attacking = true;
+			if (dashing) {
+				CancelDash();
+			}
+
+			animator.SetState(PlayerAnimator.State.Attack1);
+			attacking = true;
+		}
 	}
 
 	public void EndAttack() {
