@@ -108,6 +108,8 @@ public class Player : Character {
 				!justJumped && !stopJump)      		LongerJump();
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
+		if (Input.GetKey(KeyCode.A))          Attack();
+
 
 		//------------------------------------------------------------------------------------------
 		// QUIT APPLICATION
@@ -259,12 +261,16 @@ public class Player : Character {
 
 	public void DashUp() {
 		if (!vDashing) {
-			if (!isAttacking) {
-				if (isDashing) {
-					CancelDash();
-				}
+			if (isDashing) {
+				CancelDash();
+			}
 
-				if (hasMana) {
+			if (hasMana) {
+				if (!isAttacking || 
+					(isAttacking && (Time.frameCount - gAttackStartFrame > 10 || Time.frameCount - aAttackStartFrame > 3))) {
+
+					gAttacking = false;
+					aAttacking = false;
 					animator.SetState(PlayerAnimator.State.DashUp);
 					grounded = false;
 					stopJump = true;
@@ -362,6 +368,8 @@ public class Player : Character {
 
 			grounded = false;
 			justJumped = true;
+			AudioSource[] sounds = gameObject.GetComponents<AudioSource>();
+			sounds[0].Play();
 		}
 	}
 
