@@ -76,6 +76,14 @@ public class Player : Character {
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
 
+		//------------------------------------------------------------------------------------------
+		// QUIT APPLICATION
+		//------------------------------------------------------------------------------------------
+		if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) ||
+		     Input.GetKey(KeyCode.Q)) {
+			Application.Quit();
+		}
+
 		UpdateAnimationState();
 
 	}
@@ -96,6 +104,10 @@ public class Player : Character {
 	//// ATTACKING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void Attack() {
+		if (dashing) {
+			CancelDash();
+		}
+
 		animator.SetState(PlayerAnimator.State.Attack1);
 		attacking = true;
 	}
@@ -109,7 +121,10 @@ public class Player : Character {
 	//// DASHING
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	protected void CheckDashing() {
-		dashing = (Time.frameCount - dashStartFrame < numFramesDashing);
+		if (attacking || (Time.frameCount - dashStartFrame > 0 && 
+		                  Time.frameCount - dashStartFrame > numFramesDashing) ) {
+			CancelDash();
+		}
 
 		if (dashing) {
 			Vector3 velocity = rb.velocity;
@@ -127,6 +142,13 @@ public class Player : Character {
 			dashing = true;
 			dashStartFrame = Time.frameCount;
 		}
+	}
+
+	public void CancelDash() {
+		dashing = false;
+		Vector3 velocity = rb.velocity;
+		velocity.x = 0f;
+		//# if (facingLeft) velocity.x = -1f * velocity.x;
 	}
 
 
