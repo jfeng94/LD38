@@ -40,67 +40,85 @@ public class Floor : MonoBehaviour {
 	// This is some real spaghetti code.
 	private void UpdateDisappearing() {
 		if (disappearing) {
-			int stableRemaining  = numFramesStable;
-			int fadeOutRemaining = numFramesFadeOut;
-			int goneRemaining    = numFramesGone;
-			int fadeInRemaining  = numFramesFadeIn;
-
 			int framesSinceSteppedOn = Time.frameCount - steppedOnFrame;
+
 			if (framesSinceSteppedOn > 0) {
+				//----------------------------------------------------------------------------------
+				// Get the number of frames left we have for each stage of the platform's life
+				//----------------------------------------------------------------------------------
+				int phaseContributions = numFramesStable;
+				int stableRemaining = PosOrZero(phaseContributions - framesSinceSteppedOn);
 
-				stableRemaining = numFramesStable - framesSinceSteppedOn;
-				stableRemaining = (stableRemaining < 0) ? 0 : stableRemaining;
+				phaseContributions += numFramesFadeOut;
+				int fadeOutRemaining = PosOrZero(phaseContributions - framesSinceSteppedOn);
 
-				fadeOutRemaining = (numFramesStable + numFramesFadeOut) - framesSinceSteppedOn;
-				fadeOutRemaining = (fadeOutRemaining < 0) ? 0 : fadeOutRemaining;
+				phaseContributions += numFramesGone;
+				int goneRemaining = PosOrZero(phaseContributions - framesSinceSteppedOn);
 
-				goneRemaining = (numFramesStable + numFramesFadeOut + numFramesGone) - framesSinceSteppedOn;
-				goneRemaining = (goneRemaining < 0) ? 0 : goneRemaining;
+				phaseContributions += numFramesFadeIn;
+				int fadeInRemaining = PosOrZero(phaseContributions - framesSinceSteppedOn);
 
-				fadeInRemaining = (numFramesStable + numFramesFadeOut + numFramesGone + numFramesFadeIn) - framesSinceSteppedOn;
-				fadeInRemaining = (fadeInRemaining < 0) ? 0 : fadeInRemaining;
+				//----------------------------------------------------------------------------------
+				// If we've finished all parts of the animation, reset everything.
+				//----------------------------------------------------------------------------------
+				if (fadeInRemaining <= 0) {
+					stableRemaining  = numFramesStable;
+					fadeOutRemaining = numFramesFadeOut;
+					goneRemaining    = numFramesGone;
+
+					steppedOnFrame = int.MaxValue;
+				}
+				
+				//----------------------------------------------------------------------------------
+				// Turn collider on or off based on whether fade out has finished.
+				//----------------------------------------------------------------------------------
+				BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+				if (boxCollider != null) {
+					boxCollider.enabled = (fadeOutRemaining > 0);
+				}
+
+				//----------------------------------------------------------------------------------
+				// Recolor the platform based on how much fade we have.
+				//----------------------------------------------------------------------------------
+				float transparency = 1f;
+
+				if (fadeOutRemaining == 0) {
+					transparency = (float) (numFramesFadeIn - fadeInRemaining) / (float) numFramesFadeIn;
+				}
+				else {
+					transparency = (float) fadeOutRemaining / (float) numFramesFadeOut;
+				}
+				Color color = new Color(1f, 1f, 1f, transparency);
+
+				SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+				if (spriteRenderer != null) {
+					spriteRenderer.color = color;
+				}
+
+				SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+				for (int i = 0; i < spriteRenderers.Length; i++) {
+					if (spriteRenderers[i] != null) {
+						spriteRenderers[i].color = color;
+					}			
+				}
 			}
 
-			if (fadeInRemaining <= 0) {
-				stableRemaining  = numFramesStable;
-				fadeOutRemaining = numFramesFadeOut;
-				goneRemaining    = numFramesGone;	
-			}
 
-			BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
-			if (boxCollider != null) {
-				boxCollider.enabled = (fadeOutRemaining > 0);
-			}
-
-			float transparency = 1f;
-
-			if (fadeOutRemaining == 0) {
-				transparency = (float) (numFramesFadeIn - fadeInRemaining) / (float) numFramesFadeIn;
-			}
-			else {
-				transparency = (float) fadeOutRemaining / (float) numFramesFadeOut;
-			}
-			Color color = new Color(1f, 1f, 1f, transparency);
-
-			SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-			if (spriteRenderer != null) {
-				spriteRenderer.color = color;
-			}
-
-			SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
-			for (int i = 0; i < spriteRenderers.Length; i++) {
-				if (spriteRenderers[i] != null) {
-					spriteRenderers[i].color = color;
-				}			
-			}
 		}
+	}
+
+	private int PosOrZero(int value) {
+		value = (value < 0) ? 0 : value; 
+		return value;
 	}
 
 	public void OnCollisionEnter2D(Collision2D collision) {
 		Player player = collision.gameObject.GetComponent<Player>();
 
 		if (player != null) {
-			steppedOnFrame = Time.frameCount;
+			if (steppedOnFrame == int.MaxValue) {
+				steppedOnFrame = Time.frameCount;
+			}
 		}
 	}
 }
