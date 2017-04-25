@@ -19,7 +19,7 @@ public class Character : MonoBehaviour, IHittable {
 	//----------------------------------------------------------------------------------------------
 	protected bool invincible;
 	protected int  invincibleStartFrame;
-	protected int  invincibilityFrames = 60;
+	protected int  invincibilityFrames = 0;
 
 	//----------------------------------------------------------------------------------------------
 	// Groundedness

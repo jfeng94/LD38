@@ -9,6 +9,8 @@ public class Enemy : Character {
 
 	private Player aggroTarget = null;
 
+	public bool isAlive = false;
+
 	// Where the enemy spawns at
 	public Vector3 spawnPosition = Vector3.zero;
 
@@ -19,7 +21,7 @@ public class Enemy : Character {
 	protected override void Start () {
 		base.Start();
 		spawnPosition = transform.position;
-
+		isAlive = true;
 		Respawn();
 	}
 	
@@ -75,12 +77,12 @@ public class Enemy : Character {
 
 	protected override void DieAHorribleDeath() {
 		animator.SetState(EnemyAnimator.State.Dead);
+		isAlive = false;
 
 		Collider2D collider = GetComponent<Collider2D>();
 		if (collider != null) {
 			collider.enabled = false;
 		}
-
 
 		if (rb != null) {
 			rb.simulated = false;
