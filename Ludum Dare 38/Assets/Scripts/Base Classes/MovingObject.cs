@@ -86,8 +86,8 @@ public class MovingObject : MonoBehaviour {
 	// 3. Give visual feedback that an enemy was hit
 	protected bool blinking;
 	protected int  blinkingStartFrame;
-	protected int  blinkCycleLength = 30;
-	protected int  blinkingDuration = 180;
+	public    int  blinkCycleLength = 30;
+	public    int  blinkingDuration = 180;
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +97,8 @@ public class MovingObject : MonoBehaviour {
 	protected virtual void Start () {
 		rb = GetComponent<Rigidbody2D>();
 		rb.gravityScale = 0.8f;
+
+		animator = GetComponentInChildren<SpriteAnimator>();
 	}
 	
 	protected virtual void Update() {

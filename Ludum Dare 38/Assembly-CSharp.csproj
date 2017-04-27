@@ -60,15 +60,14 @@
      <Compile Include="Assets\Scripts\Camera\WarpTrigger.cs" />
      <Compile Include="Assets\Scripts\Enemy\BirdEnemy.cs" />
      <Compile Include="Assets\Scripts\Enemy\BouncingEnemy.cs" />
+     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyHitbox.cs" />
      <Compile Include="Assets\Scripts\Enemy\FlappingEnemy.cs" />
-     <Compile Include="Assets\Scripts\Environment\Enemy.cs" />
      <Compile Include="Assets\Scripts\Environment\Environment.cs" />
      <Compile Include="Assets\Scripts\Environment\Floor.cs" />
      <Compile Include="Assets\Scripts\Environment\IInteractable.cs" />
      <Compile Include="Assets\Scripts\Environment\Interactable.cs" />
      <Compile Include="Assets\Scripts\Environment\NPC.cs" />
-     <Compile Include="Assets\Scripts\Environment\NPCAnimator.cs" />
      <Compile Include="Assets\Scripts\Environment\PathNode.cs" />
      <Compile Include="Assets\Scripts\NeuralNet\MovementPrediction.cs" />
      <Compile Include="Assets\Scripts\NeuralNet\NeuralNet.cs" />

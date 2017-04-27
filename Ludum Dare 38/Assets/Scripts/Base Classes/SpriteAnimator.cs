@@ -15,6 +15,7 @@ public class SpriteAnimator : MonoBehaviour {
 	public SpriteRenderer dashUp;
 	public SpriteRenderer groundAttack;
 	public SpriteRenderer aerialAttack;
+	public SpriteRenderer dead;
 
 	public bool defaultFacingLeft = false;
 
@@ -72,6 +73,7 @@ public class SpriteAnimator : MonoBehaviour {
 		SetSpriteColor(      dashUp, color);
 		SetSpriteColor(groundAttack, color);
 		SetSpriteColor(aerialAttack, color);
+		SetSpriteColor(        dead, color);
 	}
 
 	private void SetSpriteColor(SpriteRenderer spriteRenderer, Color color) {
@@ -83,19 +85,19 @@ public class SpriteAnimator : MonoBehaviour {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public void TurnLeft() {
 		if (defaultFacingLeft) {
-			transform.localScale = new Vector3(-1, 1, 1);
+			transform.localScale = new Vector3(1, 1, 1);
 		}
 		else {
-			transform.localScale = new Vector3(1, 1, 1);
+			transform.localScale = new Vector3(-1, 1, 1);
 		}
 	}
 
 	public void TurnRight() {
 		if (defaultFacingLeft) {
-			transform.localScale = new Vector3(1, 1, 1);
+			transform.localScale = new Vector3(-1, 1, 1);
 		}
 		else {
-			transform.localScale = new Vector3(-1, 1, 1);
+			transform.localScale = new Vector3(1, 1, 1);
 		}
 	}
 
@@ -115,6 +117,7 @@ public class SpriteAnimator : MonoBehaviour {
 			SetSpriteActive(      dashUp, false);
 			SetSpriteActive(groundAttack, false);
 			SetSpriteActive(aerialAttack, false);
+			SetSpriteActive(        dead, false);
 
 			// Re-enable based on state
 			switch (state) {
@@ -146,6 +149,10 @@ public class SpriteAnimator : MonoBehaviour {
 					SetSpriteActive(aerialAttack);
 					break;
 
+				case MovingObject.AnimationState.Dead:
+					SetSpriteActive(dead);
+					break;
+
 				default:
 					// Default to idle, but keep the state undefined, so we can properly switch
 					// into idle later.
@@ -159,7 +166,7 @@ public class SpriteAnimator : MonoBehaviour {
 	}
 
 	private void SetSpriteActive(SpriteRenderer spriteRenderer, bool active = true) {
-		if (spriteRenderer != null) spriteRenderer.gameObject.SetActive(true);
+		if (spriteRenderer != null) spriteRenderer.gameObject.SetActive(active);
 	}
 
 }

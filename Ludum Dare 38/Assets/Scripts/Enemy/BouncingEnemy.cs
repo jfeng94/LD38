@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BouncingEnemy : Enemy {
 
-	public float jumpingVelocity = 20f;
-
 	protected override void MoveTowardsPosition(Vector3 position) {
 		Vector3 displacement = position - transform.position;
 

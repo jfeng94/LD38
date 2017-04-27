@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4794867564326758}
   - component: {fileID: 212370153913662854}
   - component: {fileID: 95155088549722690}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Idle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4851421962325396}
   - component: {fileID: 212728290902467142}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4933876839158902}
   - component: {fileID: 212001698319198542}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4686644692913624}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 4199707493805374}
   - component: {fileID: 23721746971670676}
   - component: {fileID: 102676625054272474}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: New Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 60069059782308982}
   - component: {fileID: 114546891466179006}
   - component: {fileID: 61779053696945698}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Blob enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 212780845859579204}
   - component: {fileID: 95626791548248168}
   - component: {fileID: 114418709321185380}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 4649782959146750}
   - component: {fileID: 212669749399435080}
   - component: {fileID: 95813537661360572}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Move
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ GameObject:
   - component: {fileID: 4138804528978616}
   - component: {fileID: 61475886807222380}
   - component: {fileID: 114132113802920314}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Passive Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4603902985838288}
   - component: {fileID: 114217713505826866}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1703044982097048}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.4, y: 0.76, z: 0}
+  m_LocalPosition: {x: 0.89, y: 26.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4603902985838288}
@@ -383,11 +383,16 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Points:
     m_Paths:
-    - - {x: -4.496106, y: 3.214501}
-      - {x: -0.3916731, y: 0.0496943}
+    - - {x: -2.818098, y: 3.3541355}
+      - {x: 0.023025513, y: 4.02339}
+      - {x: 4.668686, y: 4.1501026}
+      - {x: 8.310841, y: 3.7810507}
+      - {x: 9.773582, y: 3.0583153}
+      - {x: 13.061825, y: -0.5125637}
+      - {x: 0.50580573, y: -0.51063824}
       - {x: -0.3858986, y: -0.50700164}
-      - {x: -6.1039057, y: -0.51375055}
-      - {x: -5.943749, y: 1.6511388}
+      - {x: -5.9254875, y: -0.48630142}
+      - {x: -4.842165, y: 1.7323341}
 --- !u!61 &61475886807222380
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -511,17 +516,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1898501409039298}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f4f743e671a74243add8409811dfed7, type: 3}
+  m_Script: {fileID: 11500000, guid: 10b10389ff265c447b6c0498790fd17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 114546891466179006}
+  movingObject: {fileID: 114546891466179006}
   idle: {fileID: 212370153913662854}
   walk: {fileID: 212669749399435080}
-  dead: {fileID: 212780845859579204}
-  defaultFacingLeft: 0
+  jump: {fileID: 0}
+  dash: {fileID: 0}
+  dashUp: {fileID: 0}
+  groundAttack: {fileID: 0}
+  aerialAttack: {fileID: 0}
+  defaultFacingLeft: 1
   storedState: 0
-  invincibleTint1: {r: 1, g: 0, b: 0, a: 1}
-  invincibleTint2: {r: 1, g: 0.72413796, b: 0, a: 1}
+  blinkTint1: {r: 1, g: 0, b: 0, a: 1}
+  blinkTint2: {r: 1, g: 0.93103456, b: 0, a: 1}
   blinkFrames: 15
 --- !u!114 &114418709321185380
 MonoBehaviour:
@@ -531,10 +540,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1760668762751800}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9dddd5ef1d1da94dbe911a3b6a31b4c, type: 3}
+  m_Script: {fileID: 11500000, guid: 91a14740c3fc1f349a1db197b489215b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 3
+  state: 8
   animator: {fileID: 114217713505826866}
 --- !u!114 &114546891466179006
 MonoBehaviour:
@@ -547,16 +556,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60b3565c9e9976c40be229539d419a17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSpeed: 2
+  movementSpeed: 0.5
+  aerialDrift: 0.1
+  path: {fileID: 0}
+  walkAround: 1
+  pathIgnoresX: 0
+  pathIgnoresY: 0
+  pathIgnoresZ: 0
+  randomWalk: 1
+  minWaitFrames: 10
+  maxWaitFrames: 60
+  jumpingVelocity: 5
+  blinkCycleLength: 30
+  blinkingDuration: 180
   maxHealth: 5
   maxMana: 4
   health: 5
   mana: 3
-  colliderVisualizer: {fileID: 0}
-  maxSpeed: 2
-  movementSpeed: 0.5
-  aerialDrift: 0.1
   indicator: {fileID: 1358077239916020}
-  animator: {fileID: 114217713505826866}
+  isAlive: 0
   spawnPosition: {x: 0, y: 0, z: 0}
   leashLength: 5
   aggroRange: 10
