@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Serves as a public interface for all the various components that make up a player.
-public class Player : Character {
+public class Player : Combatant {
 	//----------------------------------------------------------------------------------------------
 	// Dashing
 	//----------------------------------------------------------------------------------------------
@@ -11,27 +11,21 @@ public class Player : Character {
 	public  float verticalDashingVelocity   = 50f;
 	public  int   numFramesDashing          = 30;
 	private int   dashStartFrame            = int.MinValue;
-	private int 	gAttackStartFrame 				= int.MinValue;
-	private int 	aAttackStartFrame 				= int.MinValue;
-	private int 	jumpCounter 							= 0;
-	private bool 	justJumped 								= false;
-	private bool 	stopJump 									= false;
-	//----------------------------------------------------------------------------------------------
-	// Jumping
-	//----------------------------------------------------------------------------------------------
-	public float jumpingVelocity = 5f;
+	private int   gAttackStartFrame         = int.MinValue;
+	private int   aAttackStartFrame         = int.MinValue;
+	private int   jumpCounter               = 0;
+	private bool  justJumped                = false;
+	private bool  stopJump                  = false;
 
 	//----------------------------------------------------------------------------------------------
 	// Animator and state flags state flags
 	//----------------------------------------------------------------------------------------------
-	public PlayerAnimator animator;
 	private bool hDashing    = false;
 	private bool vDashing    = false;
 	private bool movingLeft  = false;
 	private bool movingRight = false;
 	private bool gAttacking  = false;
 	private bool aAttacking  = false;
-	private bool facingLeft  = false;
 
 	//----------------------------------------------------------------------------------------------
 	// Passive idle regen
@@ -66,12 +60,9 @@ public class Player : Character {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// MONOBEHAVIOUR METHODS
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// Update is called once per frame
 	protected override void Update () {
 		base.Update();
-		invincibilityFrames = 30;
-		CheckInvincibility();
 
 		CheckDashing();
 
@@ -106,7 +97,7 @@ public class Player : Character {
 		// WHILE HOLDING KEY DOWN
 		//------------------------------------------------------------------------------------------
 		if (Input.GetKey(KeyCode.Space) &&
-				!justJumped && !stopJump)      		LongerJump();
+				!justJumped && !stopJump)     LongerJump();
 		if (Input.GetKey(KeyCode.LeftArrow))  MoveLeft();
 		if (Input.GetKey(KeyCode.RightArrow)) MoveRight();
 		if (Input.GetKey(KeyCode.A))          Attack();
@@ -186,12 +177,12 @@ public class Player : Character {
 			}
 
 			if (grounded) {	
-				animator.SetState(PlayerAnimator.State.GroundAttack);
+				animator.SetState(MovingObject.AnimationState.GroundAttack);
 				gAttacking = true;
 				gAttackStartFrame = Time.frameCount;
 			}
 			else {
-				animator.SetState(PlayerAnimator.State.AerialAttack);
+				animator.SetState(MovingObject.AnimationState.AerialAttack);
 				aAttacking = true;
 				aAttackStartFrame = Time.frameCount;
 			}
@@ -250,7 +241,7 @@ public class Player : Character {
 
 					gAttacking = false;
 					aAttacking = false;
-					animator.SetState(PlayerAnimator.State.Dash);
+					animator.SetState(MovingObject.AnimationState.Dash);
 					hDashing = true;
 					dashStartFrame = Time.frameCount;
 					rb.gravityScale = 0;
@@ -272,7 +263,7 @@ public class Player : Character {
 
 					gAttacking = false;
 					aAttacking = false;
-					animator.SetState(PlayerAnimator.State.DashUp);
+					animator.SetState(MovingObject.AnimationState.DashUp);
 					grounded = false;
 					stopJump = true;
 					vDashing = true;
@@ -289,7 +280,6 @@ public class Player : Character {
 		Vector3 velocity = rb.velocity;
 		velocity.x = 0f;
 		velocity.y = 0f;
-		//# if (facingLeft) velocity.x = -1f * velocity.x;
 	}
 
 
@@ -325,10 +315,10 @@ public class Player : Character {
 	//// COMBAT AND DAMAGE
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public override void InflictDamage(int damage, Vector2 direction, float strength) {
-		if (! invincible) {
+		if (! blinking) {
 			base.InflictDamage(damage, direction, strength);
 
-			StartInvincibility();
+			StartBlinking();
 
 			// TODO -- Check for game overs?
 			if (health <= 0) {
@@ -351,6 +341,14 @@ public class Player : Character {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// MOVEMENT
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	public override bool CanMove() {
+		// Note that when the user dashes or attacks, they lock themselves into that animation.
+		// As a result, we block any walking/drifing movement
+		return (!isDashing && !gAttacking);
+	}
+
+
+
 	public void CheckGround() {
 		if (grounded) {
 			jumpCounter = 0;
@@ -359,7 +357,14 @@ public class Player : Character {
 		}
 	}
 
-	public void Jump() {
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// JUMPING
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	public override bool CanJump() {
+		return (grounded && !gAttacking && !isDashing);
+	}
+	public override void Jump() {
 		// Only allow jumping if we're grounded and not gAttacking
 		if (grounded && !gAttacking && !isDashing) {
 			Vector2 initialVelocity = rb.velocity;
@@ -384,78 +389,44 @@ public class Player : Character {
 		}
 	}
 
-	public void MoveLeft()  { Move(true);  }
-	public void MoveRight() { Move(false); }
-
-	// The actual logic behind movement, to reduce code duplication as we iterate with movement.
-	private void Move(bool left) {
-		// Note that when the user dashes or attacks, they lock themselves into that animation.
-		// As a result, we block any 
-		if (!isDashing && !gAttacking) {
-			float sign = 1f;
-			if (left) sign = -1f;
-
-			Vector3 velocity = rb.velocity;
-
-			if (grounded) velocity.x += sign * movementSpeed;
-			else          velocity.x += sign * aerialDrift;				
-
-			if (Mathf.Abs(velocity.x) > maxSpeed) velocity.x = sign * maxSpeed;
-
-			rb.velocity = velocity;
-		}
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	//// SPRITE ANIMATION
+	//// ANIMATION
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	public override bool CanTurn() { return ( ! isAttacking && !hDashing); }
+
 	private void UpdateAnimationState() {
 		if (gAttacking) {
-			animator.SetState(PlayerAnimator.State.GroundAttack);
+			animator.SetState(MovingObject.AnimationState.GroundAttack);
 			idleStartFrame = int.MaxValue;			
 		}
 		else if (aAttacking) {
-			animator.SetState(PlayerAnimator.State.AerialAttack);
+			animator.SetState(MovingObject.AnimationState.AerialAttack);
 			idleStartFrame = int.MaxValue;		
 		}
 		else if (hDashing) {
-			animator.SetState(PlayerAnimator.State.Dash);
+			animator.SetState(MovingObject.AnimationState.Dash);
 			idleStartFrame = int.MaxValue;
 		}
 		else if (vDashing) {
-			animator.SetState(PlayerAnimator.State.DashUp);
+			animator.SetState(MovingObject.AnimationState.DashUp);
 			idleStartFrame = int.MaxValue;
 		}
 		else if (!grounded) {
-			animator.SetState(PlayerAnimator.State.Jump);
+			animator.SetState(MovingObject.AnimationState.Jump);
 			idleStartFrame = int.MaxValue;
 		}
 		else if (movingLeft ^ movingRight) {
-			animator.SetState(PlayerAnimator.State.Walk);
+			animator.SetState(MovingObject.AnimationState.Walk);
 			idleStartFrame = int.MaxValue;
 		}
 		else {
-			animator.SetState(PlayerAnimator.State.Idle);
+			animator.SetState(MovingObject.AnimationState.Idle);
 			if (idleStartFrame == int.MaxValue) {
 				idleStartFrame = Time.frameCount;
 			}
 		}
-		//# Debug.Log("UpdateAnimationState -- idleStartFrame: " + idleStartFrame);
 	}
 
-	public void TurnLeft()  {
-		facingLeft = true;
-		if ( ! isAttacking && !hDashing) {
-			animator.TurnLeft();
-		}
-	}
-
-	public void TurnRight() {
-		facingLeft = false;
-		if ( ! isAttacking && !hDashing) {
-			animator.TurnRight();
-		}
-	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
 	 	IInteractable interactable = collider.gameObject.GetComponent<IInteractable>();

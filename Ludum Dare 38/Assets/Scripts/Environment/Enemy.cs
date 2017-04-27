@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Character {
+public class Enemy : Combatant {
 	public GameObject indicator;
-
-	public EnemyAnimator animator;
 
 	private Player aggroTarget = null;
 
@@ -35,15 +33,8 @@ public class Enemy : Character {
 
 			// Follow the player if they are holding aggro
 			if (aggroTarget != null) {
-				// If the enemy is sufficiently far from the spawn position, lose aggro
-				//# if (distanceFromSpawn > leashLength) {
-				//# 	aggroTarget = null;
-				//# }
-
 				// Otherwise, move towards the player
-				//# else {
-					MoveTowardsPosition(aggroTarget.transform.position);
-				//# }
+				MoveTowardsPosition(aggroTarget.transform.position);
 			}
 
 			// If there is no aggro, move towards the spawn point
@@ -54,8 +45,6 @@ public class Enemy : Character {
 	}
 
 	protected void Respawn() {
-		//# animator.SetState(EnemyAnimator.State.Idle);
-
 		Collider2D collider = GetComponent<Collider2D>();
 		if (collider != null) {
 			collider.enabled = true;
@@ -76,7 +65,7 @@ public class Enemy : Character {
 	}
 
 	protected override void DieAHorribleDeath() {
-		animator.SetState(EnemyAnimator.State.Dead);
+		animator.SetState(MovingObject.AnimationState.Dead);
 		isAlive = false;
 
 		Collider2D collider = GetComponent<Collider2D>();
@@ -143,44 +132,6 @@ public class Enemy : Character {
 	private void HideIndicator() {
 		if (indicator != null) {
 			indicator.SetActive(false);
-		}
-	}
-
-	protected virtual void MoveTowardsPosition(Vector3 position) {
-		if (rb != null) {
-			float displacement = position.x - transform.position.x;
-
-			Vector3 velocity = rb.velocity;
-
-			if (Mathf.Abs(displacement) < 0.2f) {
-				velocity.x = 0;
-				rb.velocity = velocity;
-
-				if (animator != null) {
-					animator.SetState(EnemyAnimator.State.Idle);
-				}
-				return;
-			}
-
-			if (grounded) velocity.x += Mathf.Sign(displacement) * movementSpeed;
-			else          velocity.x += Mathf.Sign(displacement) * aerialDrift;
-			
-			if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement)) {
-				velocity.x = Mathf.Sign(displacement) * maxSpeed;
-			}
-
-			if (Mathf.Sign(displacement) > 0) {
-				if (animator != null) animator.TurnRight();
-			}
-			else                              {
-				if (animator != null) animator.TurnLeft();  
-			}
-
-			if (animator != null) {
-				animator.SetState(EnemyAnimator.State.Walk);
-			}
-
-			rb.velocity = velocity;
 		}
 	}
 }
