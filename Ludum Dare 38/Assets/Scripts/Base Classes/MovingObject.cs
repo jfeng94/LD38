@@ -230,9 +230,6 @@ public class MovingObject : MonoBehaviour {
 							}
 							return;
 						}
-						else {
-							Debug.Log("moving displacement " + displacement);
-						}
 						MoveTowardsPosition(transform.position + displacement);
 					}
 				}
@@ -267,6 +264,17 @@ public class MovingObject : MonoBehaviour {
 		if (CanMove()) {
 			Vector3 displacement = position - transform.position;
 
+			// Get rid of undesired dimensional contributions to displacement
+			if (pathIgnoresX) {
+				displacement.x = 0;
+			}
+			if (pathIgnoresY) {
+				displacement.y = 0;
+			}
+			if (pathIgnoresZ) {
+				displacement.z = 0;
+			}
+
 			Vector3 velocity = rb.velocity;
 
 			if (displacement.magnitude < 0.2f) {
@@ -298,6 +306,9 @@ public class MovingObject : MonoBehaviour {
 
 			if (animator != null) {
 				animator.SetState(AnimationState.Walk);
+				if (gameObject.name == "Blob enemy") {
+					Debug.Log("???? displacement is " + displacement);
+				}
 			}
 
 			rb.velocity = velocity;
