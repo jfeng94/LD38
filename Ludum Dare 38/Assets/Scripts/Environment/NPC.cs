@@ -56,4 +56,38 @@ public class NPC : MovingObject, IInteractable {
 		}
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//// GROUNDEDNESS OVERRIDE
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	protected override void CheckGrounded() {
+		// We can only be grounded if the y velocity isn't positive (going up);
+		if (rb.velocity.y <= 0) {
+			// Get all the box-colliders on this object
+			BoxCollider2D[] colliders = GetComponents<BoxCollider2D>();
+			for (int i = 0; i < colliders.Length; i++) {
+
+				// *DO* use trigger colliders to determine groundedness	
+				// If that collider touches a layer we consider to be ground
+				if (colliders[i].IsTouchingLayers(GetGroundedLayerMask())) {
+					grounded = true;
+					return;
+				}
+			}
+			// Get all the box-colliders on childed to this object
+			// Note this does not retrieve any colliders that are on inactive objects.
+			colliders = GetComponentsInChildren<BoxCollider2D>();
+			for (int i = 0; i < colliders.Length; i++) {
+
+				// *DO* use trigger colliders to determine groundedness	
+				// If that collider touches a layer we consider to be ground
+				if (colliders[i].IsTouchingLayers(GetGroundedLayerMask())) {
+					grounded = true;
+					return;
+				}
+			}
+		}
+		grounded = false;
+	}
+
 }

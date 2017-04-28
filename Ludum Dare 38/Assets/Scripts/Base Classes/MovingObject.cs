@@ -46,8 +46,6 @@ public class MovingObject : MonoBehaviour {
 
 	private System.Random RNG = new System.Random();
 
-	private List<GameObject> pathNodes = new List<GameObject>();
-
 	//----------------------------------------------------------------------------------------------
 	// Jumping
 	//----------------------------------------------------------------------------------------------
@@ -113,7 +111,7 @@ public class MovingObject : MonoBehaviour {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//// UPDATE METHODS
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	protected void CheckGrounded() {
+	protected virtual void CheckGrounded() {
 		// We can only be grounded if the y velocity isn't positive (going up);
 		if (rb.velocity.y <= 0) {
 			// Get all the box-colliders on this object
@@ -188,51 +186,55 @@ public class MovingObject : MonoBehaviour {
 					// Get current node
 					PathNode node = path.GetNodeAtIndex(pathIndex);
 
-					// Get displacement between this MovingObject and its target position
-					Vector3 displacement = node.transform.position - transform.position;
+					if (node != null) {
+						// Get displacement between this MovingObject and its target position
+						Vector3 displacement = node.transform.position - transform.position;
 
-					// Get rid of undesired dimensional contributions to displacement
-					if (pathIgnoresX) {
-						displacement.x = 0;
-					}
-					if (pathIgnoresY) {
-						displacement.y = 0;
-					}
-					if (pathIgnoresZ) {
-						displacement.z = 0;
-					}
+						// Get rid of undesired dimensional contributions to displacement
+						if (pathIgnoresX) {
+							displacement.x = 0;
+						}
+						if (pathIgnoresY) {
+							displacement.y = 0;
+						}
+						if (pathIgnoresZ) {
+							displacement.z = 0;
+						}
 
-					// If we are within a reasonable distance from the target node, switch targets.
-					if (displacement.magnitude < 0.2f) {
-						Vector3 velocity = rb.velocity;
-						velocity.x = 0;
-						rb.velocity = velocity;
+						// If we are within a reasonable distance from the target node, switch targets.
+						if (displacement.magnitude < 0.2f) {
+							Vector3 velocity = rb.velocity;
+							velocity.x = 0;
+							rb.velocity = velocity;
 
-						if (randomWalk) {
-							int newIndex = RNG.Next(0, numNodes - 1);
+							if (randomWalk) {
+								int newIndex = RNG.Next(0, numNodes - 1);
 
-							if (newIndex == pathIndex) {
-								newIndex = newIndex - 1;
+								if (newIndex == pathIndex) {
+									newIndex = newIndex - 1;
+								}
+
+								pathIndex = newIndex;
+							}
+							else {
+								pathIndex = pathIndex + 1;
 							}
 
-							pathIndex = newIndex;
+							pathIndex = (((pathIndex) % numNodes) + numNodes) % numNodes;
+
+							waitFrameDuration = RNG.Next(minWaitFrames, maxWaitFrames);
+							waitStartFrame = Time.frameCount;
+
+							if (animator != null) {
+								animator.SetState(AnimationState.Idle);
+							}
+							return;
 						}
 						else {
-							pathIndex = pathIndex + 1;
+							Debug.Log("moving displacement " + displacement);
 						}
-
-						pathIndex = (((pathIndex) % numNodes) + numNodes) % numNodes;
-
-						waitFrameDuration = RNG.Next(minWaitFrames, maxWaitFrames);
-						waitStartFrame = Time.frameCount;
-
-						if (animator != null) {
-							animator.SetState(AnimationState.Idle);
-						}
-						return;
+						MoveTowardsPosition(transform.position + displacement);
 					}
-
-					MoveTowardsPosition(pathNodes[pathIndex].transform.position);
 				}
 			}
 		}
@@ -263,13 +265,12 @@ public class MovingObject : MonoBehaviour {
 
 	protected virtual void MoveTowardsPosition(Vector3 position) {
 		if (CanMove()) {
-			float displacement = position.x - transform.position.x;
+			Vector3 displacement = position - transform.position;
 
 			Vector3 velocity = rb.velocity;
 
-			if (Mathf.Abs(displacement) < 0.2f) {
-				velocity.x = 0;
-				rb.velocity = velocity;
+			if (displacement.magnitude < 0.2f) {
+				rb.velocity = Vector3.zero;
 
 				if (animator != null) {
 					animator.SetState(AnimationState.Idle);
@@ -277,23 +278,28 @@ public class MovingObject : MonoBehaviour {
 				return;
 			}
 
-			if (grounded) velocity.x += Mathf.Sign(displacement) * movementSpeed;
-			else          velocity.x += Mathf.Sign(displacement) * aerialDrift;
+			if (grounded) {
+				velocity += displacement.normalized * movementSpeed;
+			}
+			else {
+				velocity += displacement.normalized * aerialDrift;
+			}
 			
-			if (Mathf.Abs(velocity.x) > maxSpeed && Mathf.Sign(velocity.x) == Mathf.Sign(displacement)) {
-				velocity.x = Mathf.Sign(displacement) * maxSpeed;
+			if (velocity.magnitude > maxSpeed) {
+				velocity = velocity.normalized * maxSpeed;
 			}
 
-			if (Mathf.Sign(displacement) > 0) {
+			if (velocity.x > 0) {
 				if (animator != null) animator.TurnRight();
 			}
-			else                              {
+			else {
 				if (animator != null) animator.TurnLeft();  
 			}
 
 			if (animator != null) {
 				animator.SetState(AnimationState.Walk);
 			}
+
 			rb.velocity = velocity;
 		}
 	}
